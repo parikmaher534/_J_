@@ -3,8 +3,7 @@ var _J_ = (function(){
   /**
    * Private variables and methods
    */
-  var th_    = this,
-      conf   = _J_Config,
+  var conf   = _J_Config,
       lang   = _J_Lang,
       canvas = null,
       ctx    = null;
