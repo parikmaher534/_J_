@@ -8,7 +8,11 @@
     <script>
       window.onload = function(){
         _J_.Create.Object("Line",{x: 10, y:10, toX: 100, toY: 200});
-        _J_.Create.Object("Circle",{x: 10, y:10, radius: 100});
+        _J_.Create.Object("Circle",{x: 10, y:10, radius: 100}, "second");
+        _J_.Create.Object("Line",{x: 10, y:10, toX: 100, toY: 200});
+        _J_.Create.Object("Line",{x: 10, y:10, toX: 100, toY: 300}, "test");
+        
+        _J_.Render.All();
       };
     </script>
   </head>

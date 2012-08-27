@@ -1,14 +1,21 @@
-var _J_ = (function(){
+var _J_ = (function(c, l){
+  
+  
+  "use strict";
+  
   
   /**
    * Private variables and methods
    */
-  var conf       = _J_Config,
-      lang       = _J_Lang,
+  var conf       = c,
+      lang       = l,
       canvas     = null,
       ctx        = null,
       currentCtx = null,      //Current canvas ( plot || buffer )
-      STACK      = {};
+      STACK      = {
+        "Common": [],
+        "Groups": {}
+      };
   
   
   
@@ -40,10 +47,19 @@ var _J_ = (function(){
   
   
   //Add object to stack object
-  var AddObjectToStack = function(t, o){
+  var AddObjectToStack = function(t, o, g){
     t = t.toLowerCase();
-    if( !STACK[t] ) STACK[t] = [];
-    CheckObjectParams(t, o) ? STACK[t].push(o) : ERROR(lang.icorrect_params);
+    g = g ? g.toLowerCase() : null;
+    o.type = t;
+    
+    if( g ){
+      if( !STACK.Groups[g] ){
+        STACK.Groups[g] = [];
+      };
+      CheckObjectParams(t, o) ? STACK.Groups[g].push(o) : ERROR(lang.icorrect_params);
+    }else{
+      CheckObjectParams(t, o) ? STACK.Common.push(o) : ERROR(lang.icorrect_params);  
+    };
   };
   
   //Check on correct parameters
@@ -60,11 +76,56 @@ var _J_ = (function(){
     };
   };
   
+  //Get each element in loop
+  var LoopAllElements = function(callback){
+    for( var i in STACK ){
+      if( STACK[i].constructor === Array ){
+        for( var j = 0; j < STACK[i].length; j++ ){
+          callback(STACK[i][j]);
+        };
+      }else if( STACK[i].constructor === Object ){
+        for( var prop in STACK[i] ){
+          for( var k = 0; k < STACK[i][prop].length; k++ ){
+            callback(STACK[i][prop][k]);
+          };
+        };
+      };
+    };
+  };
+  
+  //Draw element
+  var DrawElement = function(e){
+    switch(e.type){
+      case "line":
+        DrawLine(e); break;
+      case "rect":
+        DrawRect(e); break;
+      case "circle":
+        DrawCircle(e); break;
+      case "triangle":
+        DrawTriangle(e); break;
+    };
+  };
+  
+  //Draw line method
+  var DrawLine = function(){};
+  
+  //Draw rectangle method
+  var DrawRect = function(){};
+  
+  //Draw circle method
+  var DrawCircle = function(){};
+  
+  //Draw triangle method
+  var DrawTriangle = function(){};
+  
+  
+  
   
   
   
   /**
-   * return library API
+   * Return library API
    */
   return {
       Create: {
@@ -73,12 +134,20 @@ var _J_ = (function(){
          * @param type Name of the element
          * @param object List of element params
          */
-        Object: function(type, object){AddObjectToStack(type, object);}
+        Object: function(type, object, group){AddObjectToStack(type, object, group);}
       },
       
       Render: {
-        All: function(){},
-        Group: function(){}
+        All: function(){ 
+          LoopAllElements(function(el){
+            DrawElement(el);
+          }); 
+        },
+        Group: function(g){
+          LoopAllElements(g, function(el){
+            DrawElement(el);
+          }); 
+        }
       },
       
       Clear: {
@@ -87,4 +156,4 @@ var _J_ = (function(){
       }
   };
   
-}());
+}(_J_Config, _J_Lang));
