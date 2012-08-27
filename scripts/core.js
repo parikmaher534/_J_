@@ -31,6 +31,8 @@ var _J_ = (function(c, l){
   ;(function(c, l){
     window.addEventListener("load", function(){
       canvas = document.getElementById(c.canvasId);
+      canvas.setAttribute("width", c.width);
+      canvas.setAttribute("height", c.height);
       if( canvas ){
         if( canvas.getContext ){
           ctx = canvas.getContext("2d");
@@ -95,6 +97,8 @@ var _J_ = (function(c, l){
   
   //Draw element
   var DrawElement = function(e){
+    ctx.save();
+    ctx.beginPath();
     switch(e.type){
       case "line":
         DrawLine(e); break;
@@ -105,19 +109,42 @@ var _J_ = (function(c, l){
       case "triangle":
         DrawTriangle(e); break;
     };
+    ctx.restore();
+    ctx.stroke();
   };
   
   //Draw line method
-  var DrawLine = function(){};
+  var DrawLine = function(o){
+    ctx.moveTo(o.x, o.y);
+    ctx.lineTo(o.toX, o.toY);
+  };
   
   //Draw rectangle method
-  var DrawRect = function(){};
+  var DrawRect = function(o){
+    ctx.moveTo(o.x, o.y);
+    ctx.lineTo(o.x + o.wd, o.y);
+    ctx.lineTo(o.x + o.wd, o.y + o.hg);
+    ctx.lineTo(o.x, o.y + o.hg);
+    ctx.lineTo(o.x, o.y);
+  };
   
   //Draw circle method
-  var DrawCircle = function(){};
+  var DrawCircle = function(o){
+    if( o.pos && o.pos == "corner" ){
+      o.x += o.radius;
+      o.y += o.radius;
+    };
+    ctx.arc(o.x, o.y, o.radius, 0, 2*Math.PI);
+  };
   
   //Draw triangle method
-  var DrawTriangle = function(){};
+  var DrawTriangle = function(o){
+    ctx.moveTo(o.x, o.y);
+    ctx.lineTo(o.x - (o.wd / 2), o.y + o.hg);
+    ctx.lineTo(o.x + (o.wd / 2), o.y + o.hg);
+    ctx.lineTo(o.x, o.y);
+  };
+  
   
   
   

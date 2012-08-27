@@ -8,9 +8,9 @@
     <script>
       window.onload = function(){
         _J_.Create.Object("Line",{x: 10, y:10, toX: 100, toY: 200});
-        _J_.Create.Object("Circle",{x: 10, y:10, radius: 100}, "second");
-        _J_.Create.Object("Line",{x: 10, y:10, toX: 100, toY: 200});
-        _J_.Create.Object("Line",{x: 10, y:10, toX: 100, toY: 300}, "test");
+        _J_.Create.Object("Circle",{x: 80, y:80, radius: 80, pos:"corner"}, "second");
+        _J_.Create.Object("rect",{x: 156, y:76, wd: 56, hg: 56});
+        _J_.Create.Object("triangle",{x: 260, y:160, wd: 50, hg: 50}, "test");
         
         _J_.Render.All();
       };
