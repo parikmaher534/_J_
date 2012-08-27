@@ -50,8 +50,13 @@ var _J_ = (function(){
   var CheckObjectParams = function(t, o){
     switch(t){
       case "line":
-        if( o.x && o.y && o.toX && o.toY ) return 1;
-        break;
+        if( o.x && o.y && o.toX && o.toY ) return 1; break;
+      case "rect":
+        if( o.x && o.y && o.wd && o.hg ) return 1; break;
+      case "triangle":
+        if( o.x && o.y && o.wd && o.hg ) return 1; break;
+      case "circle":
+        if( o.x && o.y && o.radius ) return 1; break;  
     };
   };
   
