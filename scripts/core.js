@@ -3,10 +3,13 @@ var _J_ = (function(){
   /**
    * Private variables and methods
    */
-  var conf   = _J_Config,
-      lang   = _J_Lang,
-      canvas = null,
-      ctx    = null;
+  var conf       = _J_Config,
+      lang       = _J_Lang,
+      canvas     = null,
+      ctx        = null,
+      currentCtx = null,      //Current canvas ( plot || buffer )
+      STACK      = {};
+  
   
   
   /**
@@ -35,11 +38,48 @@ var _J_ = (function(){
   
   
   
+  
+  //Add object to stack object
+  var AddObjectToStack = function(t, o){
+    t = t.toLowerCase();
+    if( !STACK[t] ) STACK[t] = [];
+    CheckObjectParams(t, o) ? STACK[t].push(o) : ERROR(lang.icorrect_params);
+  };
+  
+  //Check on correct parameters
+  var CheckObjectParams = function(t, o){
+    switch(t){
+      case "line":
+        if( o.x && o.y && o.toX && o.toY ) return 1;
+        break;
+    };
+  };
+  
+  
+  
+  
   /**
    * return library API
    */
   return {
-
+      Create: {
+        /**
+         * Add object to stack of elements
+         * @param type Name of the element
+         * @param object List of element params
+         */
+        Object: function(type, object){AddObjectToStack(type, object);}
+      },
+      
+      Render: {
+        All: function(){},
+        Group: function(){}
+      },
+      
+      Clear: {
+        All: function(){},
+        Area: function(){}
+      }
   };
   
 }());
