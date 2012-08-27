@@ -42,6 +42,8 @@ var _J_ = (function(c, l){
       }else{
         ERROR(l.nocanvas);
       };
+      
+      currentCtx = ctx;
     }, false);
   }(conf, lang));
   
@@ -97,8 +99,8 @@ var _J_ = (function(c, l){
   
   //Draw element
   var DrawElement = function(e){
-    ctx.save();
-    ctx.beginPath();
+    currentCtx.save();
+    currentCtx.beginPath();
     switch(e.type){
       case "line":
         DrawLine(e); break;
@@ -109,23 +111,23 @@ var _J_ = (function(c, l){
       case "triangle":
         DrawTriangle(e); break;
     };
-    ctx.restore();
-    ctx.stroke();
+    currentCtx.restore();
+    currentCtx.stroke();
   };
   
   //Draw line method
   var DrawLine = function(o){
-    ctx.moveTo(o.x, o.y);
-    ctx.lineTo(o.toX, o.toY);
+    currentCtx.moveTo(o.x, o.y);
+    currentCtx.lineTo(o.toX, o.toY);
   };
   
   //Draw rectangle method
   var DrawRect = function(o){
-    ctx.moveTo(o.x, o.y);
-    ctx.lineTo(o.x + o.wd, o.y);
-    ctx.lineTo(o.x + o.wd, o.y + o.hg);
-    ctx.lineTo(o.x, o.y + o.hg);
-    ctx.lineTo(o.x, o.y);
+    currentCtx.moveTo(o.x, o.y);
+    currentCtx.lineTo(o.x + o.wd, o.y);
+    currentCtx.lineTo(o.x + o.wd, o.y + o.hg);
+    currentCtx.lineTo(o.x, o.y + o.hg);
+    currentCtx.lineTo(o.x, o.y);
   };
   
   //Draw circle method
@@ -134,15 +136,15 @@ var _J_ = (function(c, l){
       o.x += o.radius;
       o.y += o.radius;
     };
-    ctx.arc(o.x, o.y, o.radius, 0, 2*Math.PI);
+    currentCtx.arc(o.x, o.y, o.radius, 0, 2*Math.PI);
   };
   
   //Draw triangle method
   var DrawTriangle = function(o){
-    ctx.moveTo(o.x, o.y);
-    ctx.lineTo(o.x - (o.wd / 2), o.y + o.hg);
-    ctx.lineTo(o.x + (o.wd / 2), o.y + o.hg);
-    ctx.lineTo(o.x, o.y);
+    currentCtx.moveTo(o.x, o.y);
+    currentCtx.lineTo(o.x - (o.wd / 2), o.y + o.hg);
+    currentCtx.lineTo(o.x + (o.wd / 2), o.y + o.hg);
+    currentCtx.lineTo(o.x, o.y);
   };
   
   
