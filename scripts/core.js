@@ -50,6 +50,8 @@ var _J_ = (function(c, l){
   
   
   
+  /* Common inside methods */
+  
   //Add object to stack object
   var AddObjectToStack = function(t, o, g){
     t = t.toLowerCase();
@@ -81,20 +83,30 @@ var _J_ = (function(c, l){
   };
   
   //Get each element in loop
-  var LoopAllElements = function(callback){
-    for( var i in STACK ){
-      if( STACK[i].constructor === Array ){
-        for( var j = 0; j < STACK[i].length; j++ ){
-          callback(STACK[i][j]);
+  var LoopAllElements = function(callback, g){
+      if( g ){
+        g = g.toLowerCase().split(" ");
+        
+        for( var groups = 0; groups < g.length; groups++ ){
+          for( var grel = 0; grel < STACK.Groups[g[groups]].length; grel++ ){
+            callback(STACK.Groups[g[groups]][grel]);
+          };
         };
-      }else if( STACK[i].constructor === Object ){
-        for( var prop in STACK[i] ){
-          for( var k = 0; k < STACK[i][prop].length; k++ ){
-            callback(STACK[i][prop][k]);
+      }else{
+        for( var i in STACK ){
+          if( STACK[i].constructor === Array ){
+            for( var j = 0; j < STACK[i].length; j++ ){
+              callback(STACK[i][j]);
+            };
+          }else if( STACK[i].constructor === Object ){
+            for( var prop in STACK[i] ){
+              for( var k = 0; k < STACK[i][prop].length; k++ ){
+                callback(STACK[i][prop][k]);
+              };
+            };
           };
         };
       };
-    };
   };
   
   //Draw element
@@ -167,15 +179,22 @@ var _J_ = (function(c, l){
       },
       
       Render: {
+        /**
+         * Render all groups of elements
+         */
         All: function(){ 
           LoopAllElements(function(el){
             DrawElement(el);
           }); 
         },
+        /**
+         * Render list of elements groups
+         * @param g Name or names of groups
+         */
         Group: function(g){
-          LoopAllElements(g, function(el){
+          LoopAllElements(function(el){
             DrawElement(el);
-          }); 
+          }, g); 
         }
       },
       
