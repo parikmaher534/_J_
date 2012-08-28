@@ -1,8 +1,6 @@
 var _J_ = (function(c, l){
   
-  
   "use strict";
-  
   
   /**
    * Private variables and methods
@@ -47,6 +45,8 @@ var _J_ = (function(c, l){
       }else{
         ERROR(l.nocanvas);
       };
+      
+      CreateBuffer();
       
       currentCtx = ctx;
     }, false);
@@ -95,15 +95,11 @@ var _J_ = (function(c, l){
   //Get each element in loop
   var LoopAllElements = function(callback, g){
       if( g ){
-        var b;
         g = g.toLowerCase().split(" ");
         
         for( var groups = 0; groups < g.length; groups++ ){
           for( var grel = 0; grel < STACK.Groups[g[groups]].length; grel++ ){
-            bufferGroups.indexOf(g[groups]) != -1 ? b = {} : b = false;
-            if( grel == 0 ) b.start = true;
-            if( grel == STACK.Groups[g[groups]].length - 1 ) b.end = true;
-            callback(STACK.Groups[g[groups]][grel], b);
+            callback(STACK.Groups[g[groups]][grel]);
           };
         };
       }else{
@@ -123,13 +119,21 @@ var _J_ = (function(c, l){
       };
   };
   
-  //Draw element
-  var DrawElement = function(e, b){
-
-    //If we draw element in buffer
-    if( typeof b === "object" ){
-      currentCtx = bufferCtx;
+  //Create canvas buffer
+  var CreateBuffer = function(){
+    if( !buffer ){
+      buffer = document.createElement("canvas");
+      buffer.setAttribute("width", conf.width);
+      buffer.setAttribute("height", conf.height);
+      bufferCtx = buffer.getContext("2d");
+      //document.body.appendChild(buffer);
     };
+  };
+  
+  //Draw element
+  var DrawElement = function(e){
+    //Change to buffer
+    currentCtx = bufferCtx;
     
     currentCtx.save();
     currentCtx.beginPath();
@@ -148,11 +152,10 @@ var _J_ = (function(c, l){
     currentCtx.stroke();
     currentCtx.restore();
 
-    //End draw in buffer
-    if( b.end ){
-      currentCtx = ctx;
-      currentCtx.drawImage(buffer, 0, 0);
-    };
+    currentCtx = ctx;
+    currentCtx.drawImage(buffer, 0, 0);
+    
+    e.data = currentCtx.getImageData(e.x, e.y, e.wd || e.toX - e.x || e.radius*2, e.hg || e.toY - e.y || e.radius*2 )
   };
   
   //Element styles
@@ -212,26 +215,6 @@ var _J_ = (function(c, l){
       currentCtx.clearRect(0, 0, conf.width, conf.height);
     };
   };
-  
-  //Create canvas buffer
-  var CreateBuffer = function(){
-    if( !buffer ){
-      buffer = document.createElement("canvas");
-      buffer.setAttribute("width", conf.width);
-      buffer.setAttribute("height", conf.height);
-      bufferCtx = buffer.getContext("2d");
-    };
-  };
-  
-  //Add to buffer group
-  var AddBufferGroup = function(g){
-     var groups = g.split(" ");
-     for( var i = 0; i < groups.length; i++ ){
-       if(bufferGroups.indexOf(groups[i]) == -1){
-         bufferGroups.push(groups[i]);
-       };
-     };
-  };
  
   //Add trigget to element
   var AddEventOnObject = function(o, e, data){
@@ -261,16 +244,78 @@ var _J_ = (function(c, l){
   var DefaultEvent = function(e, o, callback){
     switch(e){
       case "click":
-        canvas.addEventListener(e, function(event){
-          ObjectsCollision(MOUSE, o);
-        }, false);
+        canvas.addEventListener(e, function(event){}, false);
         break;
     };
   };
   
   //Elements collision
-  var ObjectsCollision = function(el, o){
-    console.log(el, o);
+  var ObjectsCollision = function(first, x, y, other, x2, y2, isCentred){
+    x  = Math.round( x );
+    y  = Math.round( y );
+    x2 = Math.round( x2 );
+    y2 = Math.round( y2 );
+
+    var w  = first.width,
+        h  = first.height,
+        w2 = other.width,
+        h2 = other.height;
+
+    if ( isCentred ) {
+        x  -= ( w/2 + 0.5) << 0
+        y  -= ( h/2 + 0.5) << 0
+        x2 -= (w2/2 + 0.5) << 0
+        y2 -= (h2/2 + 0.5) << 0
+    };
+
+    var xMin = Math.max( x, x2 ),
+        yMin = Math.max( y, y2 ),
+        xMax = Math.min( x+w, x2+w2 ),
+        yMax = Math.min( y+h, y2+h2 );
+
+    if ( xMin >= xMax || yMin >= yMax ) {
+        return false;
+    };
+
+    var xDiff = xMax - xMin,
+        yDiff = yMax - yMin,
+        pixels  = first.data,
+        pixels2 = other.data;
+
+    if ( xDiff < 4 && yDiff < 4 ) {
+        for ( var pixelX = xMin; pixelX < xMax; pixelX++ ) {
+            for ( var pixelY = yMin; pixelY < yMax; pixelY++ ) {
+                if(
+                    ( pixels [ ((pixelX-x ) + (pixelY-y )*w )*4 + 3 ] !== 0 ) &&
+                    ( pixels2[ ((pixelX-x2) + (pixelY-y2)*w2)*4 + 3 ] !== 0 )
+                ){
+                    return true;
+                };
+            };
+        };
+    }else{
+        var incX = xDiff / 3.0,
+            incY = yDiff / 3.0;
+        incX = (~~incX === incX) ? incX : (incX+1 | 0);
+        incY = (~~incY === incY) ? incY : (incY+1 | 0);
+
+        for ( var offsetY = 0; offsetY < incY; offsetY++ ) {
+            for ( var offsetX = 0; offsetX < incX; offsetX++ ) {
+                for ( var pixelY = yMin+offsetY; pixelY < yMax; pixelY += incY ) {
+                    for ( var pixelX = xMin+offsetX; pixelX < xMax; pixelX += incX ) {
+                        if (
+                                ( pixels [ ((pixelX-x ) + (pixelY-y )*w )*4 + 3 ] !== 0 ) &&
+                                ( pixels2[ ((pixelX-x2) + (pixelY-y2)*w2)*4 + 3 ] !== 0 )
+                        ) {
+                            return true;
+                        };
+                    };
+                };
+            };
+        };
+    };
+
+    return false;
   };
 
  
@@ -301,8 +346,8 @@ var _J_ = (function(c, l){
          * Render all groups of elements
          */
         All: function(){ 
-          LoopAllElements(function(el, b){
-            DrawElement(el, b);
+          LoopAllElements(function(el){
+            DrawElement(el);
           }); 
         },
         /**
@@ -310,8 +355,8 @@ var _J_ = (function(c, l){
          * @param g Name or names of groups
          */
         Group: function(g){
-          LoopAllElements(function(el, b){
-            DrawElement(el, b);
+          LoopAllElements(function(el){
+            DrawElement(el);
           }, g); 
         }
       },
@@ -326,14 +371,6 @@ var _J_ = (function(c, l){
          * @param o Object with x,y,width,height parameters
          */
         Area: function(o){ ClearArea(o); }
-      },
-      
-      Buffer: {
-        /**
-         * Draw in buffer current group(s)
-         * @param g Name(s) of group(s)
-         */
-        Group: function(g){ CreateBuffer(); AddBufferGroup(g); }
       },
       
       Event: {
