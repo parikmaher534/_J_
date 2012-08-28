@@ -179,6 +179,16 @@ var _J_ = (function(c, l){
     currentCtx.lineTo(o.x, o.y);
   };
   
+  //Clear some area method
+  var ClearArea = function(o){
+    if( o ){
+      currentCtx.clearRect(o.x, o.y, o.width, o.height);
+    }else{
+      currentCtx.clearRect(0, 0, conf.width, conf.height);
+    };
+  };
+  
+  
   
   
   
@@ -195,7 +205,7 @@ var _J_ = (function(c, l){
          * @param type Name of the element
          * @param object List of element params
          */
-        Object: function(type, object, group){AddObjectToStack(type, object, group);}
+        Object: function(type, object, group){ AddObjectToStack(type, object, group); }
       },
       
       Render: {
@@ -219,8 +229,8 @@ var _J_ = (function(c, l){
       },
       
       Clear: {
-        All: function(){},
-        Area: function(){}
+        All: function(){ ClearArea(); },
+        Area: function(o){ ClearArea(o); }
       }
   };
   
