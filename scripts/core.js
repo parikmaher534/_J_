@@ -7,12 +7,15 @@ var _J_ = (function(c, l){
   /**
    * Private variables and methods
    */
-  var conf       = c,
-      lang       = l,
-      canvas     = null,
-      ctx        = null,
-      currentCtx = null,      //Current canvas ( plot || buffer )
-      STACK      = {
+  var conf         = c,
+      lang         = l,
+      canvas       = null,
+      buffer       = null,
+      ctx          = null,
+      bufferCtx    = null,
+      bufferGroups = [],
+      currentCtx   = null,      //Current canvas ( plot || buffer )
+      STACK        = {
         "Common": [],
         "Groups": {}
       };
@@ -86,11 +89,15 @@ var _J_ = (function(c, l){
   //Get each element in loop
   var LoopAllElements = function(callback, g){
       if( g ){
+        var b;
         g = g.toLowerCase().split(" ");
         
         for( var groups = 0; groups < g.length; groups++ ){
           for( var grel = 0; grel < STACK.Groups[g[groups]].length; grel++ ){
-            callback(STACK.Groups[g[groups]][grel]);
+            bufferGroups.indexOf(g[groups]) != -1 ? b = {} : b = false;
+            if( grel == 0 ) b.start = true;
+            if( grel == STACK.Groups[g[groups]].length - 1 ) b.end = true;
+            callback(STACK.Groups[g[groups]][grel], b);
           };
         };
       }else{
@@ -111,7 +118,13 @@ var _J_ = (function(c, l){
   };
   
   //Draw element
-  var DrawElement = function(e){
+  var DrawElement = function(e, b){
+
+    //If we draw element in buffer
+    if( typeof b === "object" ){
+      currentCtx = bufferCtx;
+    };
+    
     currentCtx.save();
     currentCtx.beginPath();
     ElementStyles(e);
@@ -128,6 +141,12 @@ var _J_ = (function(c, l){
     if( e.fill ) currentCtx.fill();
     currentCtx.stroke();
     currentCtx.restore();
+
+    //End draw in buffer
+    if( b.end ){
+      currentCtx = ctx;
+      currentCtx.drawImage(buffer, 0, 0);
+    };
   };
   
   //Element styles
@@ -188,9 +207,27 @@ var _J_ = (function(c, l){
     };
   };
   
+  //Create canvas buffer
+  var CreateBuffer = function(){
+    if( !buffer ){
+      buffer = document.createElement("canvas");
+      buffer.setAttribute("width", conf.width);
+      buffer.setAttribute("height", conf.height);
+      bufferCtx = buffer.getContext("2d");
+    };
+  };
   
-  
-  
+  //Add to buffer group
+ var AddBufferGroup = function(g){
+    var groups = g.split(" ");
+    for( var i = 0; i < groups.length; i++ ){
+      if(bufferGroups.indexOf(groups[i]) == -1){
+        bufferGroups.push(groups[i]);
+      };
+    };
+ };
+ 
+ 
   
   
   
@@ -213,8 +250,8 @@ var _J_ = (function(c, l){
          * Render all groups of elements
          */
         All: function(){ 
-          LoopAllElements(function(el){
-            DrawElement(el);
+          LoopAllElements(function(el, b){
+            DrawElement(el, b);
           }); 
         },
         /**
@@ -222,15 +259,30 @@ var _J_ = (function(c, l){
          * @param g Name or names of groups
          */
         Group: function(g){
-          LoopAllElements(function(el){
-            DrawElement(el);
+          LoopAllElements(function(el, b){
+            DrawElement(el, b);
           }, g); 
         }
       },
       
       Clear: {
+        /**
+         * Clear all canvas
+         */
         All: function(){ ClearArea(); },
+        /**
+         * Clear special area
+         * @param o Object with x,y,width,height parameters
+         */
         Area: function(o){ ClearArea(o); }
+      },
+      
+      Buffer: {
+        /**
+         * Draw in buffer current group(s)
+         * @param g Name(s) of group(s)
+         */
+        Group: function(g){ CreateBuffer(); AddBufferGroup(g); }
       }
   };
   
