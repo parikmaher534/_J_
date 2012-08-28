@@ -69,6 +69,7 @@ var _J_ = (function(c, l){
   };
   
   //Check on correct parameters
+  //Elements interfaces
   var CheckObjectParams = function(t, o){
     switch(t){
       case "line":
@@ -113,6 +114,7 @@ var _J_ = (function(c, l){
   var DrawElement = function(e){
     currentCtx.save();
     currentCtx.beginPath();
+    ElementStyles(e);
     switch(e.type){
       case "line":
         DrawLine(e); break;
@@ -123,8 +125,26 @@ var _J_ = (function(c, l){
       case "triangle":
         DrawTriangle(e); break;
     };
-    currentCtx.restore();
+    if( e.fill ) currentCtx.fill();
     currentCtx.stroke();
+    currentCtx.restore();
+  };
+  
+  //Element styles
+  var ElementStyles = function(o){
+    if( o.style ){
+      for( var prop in o.style ){
+        if( currentCtx[prop] ){
+          currentCtx[prop] = o.style[prop];
+        }else{
+          o.style[prop] = o.style[prop].toString();
+          switch(prop){
+            case "color":
+              currentCtx.strokeStyle = o.style[prop]; break;
+          };
+        };
+      };
+    };
   };
   
   //Draw line method
