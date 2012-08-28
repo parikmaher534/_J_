@@ -53,6 +53,8 @@ var _J_ = (function(c, l){
   
   
   
+  
+  
   /* Common inside methods */
   
   //Add object to stack object
@@ -69,6 +71,8 @@ var _J_ = (function(c, l){
     }else{
       CheckObjectParams(t, o) ? STACK.Common.push(o) : ERROR(lang.icorrect_params);  
     };
+    
+    return o;
   };
   
   //Check on correct parameters
@@ -218,16 +222,37 @@ var _J_ = (function(c, l){
   };
   
   //Add to buffer group
- var AddBufferGroup = function(g){
-    var groups = g.split(" ");
-    for( var i = 0; i < groups.length; i++ ){
-      if(bufferGroups.indexOf(groups[i]) == -1){
-        bufferGroups.push(groups[i]);
+  var AddBufferGroup = function(g){
+     var groups = g.split(" ");
+     for( var i = 0; i < groups.length; i++ ){
+       if(bufferGroups.indexOf(groups[i]) == -1){
+         bufferGroups.push(groups[i]);
+       };
+     };
+  };
+ 
+  //Add trigget to element
+  var AddEventOnObject = function(o, e){
+    e = e.split(" ");
+    for( var i = 0; i < e.length; i++ ){
+      for( var j = 0; j < o.events[e[i]].length; j++){
+        o.events[e[i]][j]();
       };
     };
- };
+  };
+  
+  //Add listener to element
+  var AddObjectListener = function(e, o, callback){
+    if( !o.events ) o.events = {};
+    e = e.split(" ");
+    for( var i = 0; i < e.length; i++ ){
+      if( !o.events[e[i]] ) o.events[e[i]] = [];
+      o.events[e[i]].push(callback);
+    };
+  };
  
  
+  
   
   
   
@@ -241,8 +266,9 @@ var _J_ = (function(c, l){
          * Add object to stack of elements
          * @param type Name of the element
          * @param object List of element params
+         * @return object
          */
-        Object: function(type, object, group){ AddObjectToStack(type, object, group); }
+        Object: function(type, object, group){ return AddObjectToStack(type, object, group); }
       },
       
       Render: {
@@ -283,6 +309,22 @@ var _J_ = (function(c, l){
          * @param g Name(s) of group(s)
          */
         Group: function(g){ CreateBuffer(); AddBufferGroup(g); }
+      },
+      
+      Event: {
+        /**
+         * Trigger event on object
+         * @param o Object wich on trigger the event
+         * @param e Event name
+         */
+        Trigger: function(o, e){ AddEventOnObject(o, e); },
+        /**
+         * Add event listener to object
+         * @param e Event name
+         * @param o Object
+         * @param callback Listener callback function
+         */
+        On: function(e, o, callback){ AddObjectListener(e, o, callback); }
       }
   };
   
