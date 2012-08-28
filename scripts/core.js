@@ -7,18 +7,20 @@ var _J_ = (function(c, l){
   /**
    * Private variables and methods
    */
-  var conf         = c,
-      lang         = l,
-      canvas       = null,
-      buffer       = null,
-      ctx          = null,
-      bufferCtx    = null,
-      bufferGroups = [],
-      currentCtx   = null,      //Current canvas ( plot || buffer )
-      STACK        = {
+  var conf             = c,
+      lang             = l,
+      canvas           = null,
+      buffer           = null,
+      ctx              = null,
+      bufferCtx        = null,
+      bufferGroups     = [],
+      currentCtx       = null,      //Current canvas ( plot || buffer )
+      STACK            = {
         "Common": [],
         "Groups": {}
-      };
+      },
+      PREDEFINE_EVENTS = ["click"],
+      MOUSE            = {width:10, height:20, x:0, y:0};
   
   
   
@@ -244,12 +246,35 @@ var _J_ = (function(c, l){
   //Add listener to element
   var AddObjectListener = function(e, o, callback){
     if( !o.events ) o.events = {};
-    e = e.split(" ");
+    e = e.toLowerCase().split(" ");
     for( var i = 0; i < e.length; i++ ){
-      if( !o.events[e[i]] ) o.events[e[i]] = [];
-      o.events[e[i]].push(callback);
+      if( PREDEFINE_EVENTS.indexOf(e[i]) != -1 ){
+        DefaultEvent(e[i], o, callback);
+      }else{
+        if( !o.events[e[i]] ) o.events[e[i]] = [];
+        o.events[e[i]].push(callback);
+      };
     };
   };
+ 
+  //Default events handler
+  var DefaultEvent = function(e, o, callback){
+    switch(e){
+      case "click":
+        canvas.addEventListener(e, function(event){
+          ObjectsCollision(MOUSE, o);
+        }, false);
+        break;
+    };
+  };
+  
+  //Elements collision
+  var ObjectsCollision = function(el, o){
+    console.log(el, o);
+  };
+
+ 
+ 
  
  
   

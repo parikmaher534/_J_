@@ -22,9 +22,7 @@
         
         _J_.Clear.Area({x:10, y:10, width:100, height:60});
 
-        _J_.Event.On("go", bb, function(d){
-          console.log("go", d);
-        });
+        _J_.Event.On("go click", bb, function(d){});
 
         document.body.onclick = function(){
           _J_.Event.Trigger(bb, "go", {data: []});
