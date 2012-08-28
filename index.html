@@ -21,18 +21,13 @@
         _J_.Render.Group("test test2 ss");
         
         _J_.Clear.Area({x:10, y:10, width:100, height:60});
-        
-        
-        _J_.Event.On("change", bb, function(){
-          alert(1);
-        });
 
-        _J_.Event.On("go", bb, function(){
-          alert("go");
+        _J_.Event.On("go", bb, function(d){
+          console.log("go", d);
         });
 
         document.body.onclick = function(){
-          _J_.Event.Trigger(bb, "change go");
+          _J_.Event.Trigger(bb, "go", {data: []});
         };
       };
     </script>

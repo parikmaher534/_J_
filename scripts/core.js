@@ -232,11 +232,11 @@ var _J_ = (function(c, l){
   };
  
   //Add trigget to element
-  var AddEventOnObject = function(o, e){
+  var AddEventOnObject = function(o, e, data){
     e = e.split(" ");
     for( var i = 0; i < e.length; i++ ){
       for( var j = 0; j < o.events[e[i]].length; j++){
-        o.events[e[i]][j]();
+        o.events[e[i]][j](data);
       };
     };
   };
@@ -317,7 +317,7 @@ var _J_ = (function(c, l){
          * @param o Object wich on trigger the event
          * @param e Event name
          */
-        Trigger: function(o, e){ AddEventOnObject(o, e); },
+        Trigger: function(o, e, data){ AddEventOnObject(o, e, data); },
         /**
          * Add event listener to object
          * @param e Event name
