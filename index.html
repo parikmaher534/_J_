@@ -5,26 +5,15 @@
     <script src="scripts/config/lang.js"></script>
     <script src="scripts/config/configs.js"></script>
     <script src="scripts/core.js"></script>
+    <script src="scripts/modules/collision.js"></script>
     <script>
       window.onload = function(){
-        var bb = _J_.Create.Object("Line",{x: 10, y:10, toX: 100, toY: 200, style:{strokeStyle:"green"}}, "test2");
-        _J_.Create.Object("triangle",{x: 140, y:100, wd: 30, hg: 30, fill:true}, "test");
-        _J_.Create.Object("triangle",{x: 260, y:160, wd: 50, hg: 50}, "test");
-        _J_.Create.Object("Circle",{x: 80, y:80, radius: 30, style:{strokeStyle:"red"}}, "test2");
-        _J_.Create.Object("rect",{x: 156, y:76, wd: 56, hg: 56}, "ss");
-        _J_.Create.Object("triangle",{x: 260, y:160, wd: 50, hg: 50}, "test");
-        _J_.Create.Object("rect",{x: 56, y:76, wd: 96, hg: 56});
-        _J_.Create.Object("rect",{x: 116, y:36, wd: 36, hg: 16});
+        var r = SmartJ.Create.Object("rect",{x: 145, y:75, width: 26, height: 26, fill:true, style:{fillStyle:"green"}}, "ss");
+        var t = SmartJ.Create.Object("triangle",{x: 170, y:101, width: 15, height: 15, fill:true, style:{fillStyle:"red"}}, "test");
         
-        _J_.Render.Group("test test2 ss");
+        SmartJ.Render.All();
         
-        _J_.Clear.Area({x:10, y:10, width:100, height:60});
-
-        _J_.Event.On("go click", bb, function(d){});
-
-        document.body.onclick = function(){
-          _J_.Event.Trigger(bb, "go", {data: []});
-        };
+        console.log(SmartJ.ObjectsCollision({element: r, toObject: t}));
       };
     </script>
   </head>

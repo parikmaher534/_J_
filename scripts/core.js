@@ -1,4 +1,4 @@
-var _J_ = (function(c, l){
+var SmartJ = (function(c, l){
   
   "use strict";
   
@@ -84,9 +84,9 @@ var _J_ = (function(c, l){
       case "line":
         if( o.x && o.y && o.toX && o.toY ) return 1; break;
       case "rect":
-        if( o.x && o.y && o.wd && o.hg ) return 1; break;
+        if( o.x && o.y && o.width && o.height ) return 1; break;
       case "triangle":
-        if( o.x && o.y && o.wd && o.hg ) return 1; break;
+        if( o.x && o.y && o.width && o.height ) return 1; break;
       case "circle":
         if( o.x && o.y && o.radius ) return 1; break;  
     };
@@ -126,12 +126,12 @@ var _J_ = (function(c, l){
       buffer.setAttribute("width", conf.width);
       buffer.setAttribute("height", conf.height);
       bufferCtx = buffer.getContext("2d");
-      //document.body.appendChild(buffer);
     };
   };
   
   //Draw element
   var DrawElement = function(e){
+    
     //Change to buffer
     currentCtx = bufferCtx;
     
@@ -155,7 +155,7 @@ var _J_ = (function(c, l){
     currentCtx = ctx;
     currentCtx.drawImage(buffer, 0, 0);
     
-    e.data = currentCtx.getImageData(e.x, e.y, e.wd || e.toX - e.x || e.radius*2, e.hg || e.toY - e.y || e.radius*2 )
+    e.data = currentCtx.getImageData(e.x, e.y, e.width || e.toX - e.x || e.radius*2, e.height || e.toY - e.y || e.radius*2 )
   };
   
   //Element styles
@@ -179,14 +179,16 @@ var _J_ = (function(c, l){
   var DrawLine = function(o){
     currentCtx.moveTo(o.x, o.y);
     currentCtx.lineTo(o.toX, o.toY);
+    o.width = o.toX - o.x;
+    o.height = o.toY - o.y;
   };
   
   //Draw rectangle method
   var DrawRect = function(o){
     currentCtx.moveTo(o.x, o.y);
-    currentCtx.lineTo(o.x + o.wd, o.y);
-    currentCtx.lineTo(o.x + o.wd, o.y + o.hg);
-    currentCtx.lineTo(o.x, o.y + o.hg);
+    currentCtx.lineTo(o.x + o.width, o.y);
+    currentCtx.lineTo(o.x + o.width, o.y + o.height);
+    currentCtx.lineTo(o.x, o.y + o.height);
     currentCtx.lineTo(o.x, o.y);
   };
   
@@ -196,14 +198,16 @@ var _J_ = (function(c, l){
       o.x += o.radius;
       o.y += o.radius;
     };
+    o.width  = o.radius*2;
+    o.height = o.radius*2;
     currentCtx.arc(o.x, o.y, o.radius, 0, 2*Math.PI);
   };
   
   //Draw triangle method
   var DrawTriangle = function(o){
     currentCtx.moveTo(o.x, o.y);
-    currentCtx.lineTo(o.x - (o.wd / 2), o.y + o.hg);
-    currentCtx.lineTo(o.x + (o.wd / 2), o.y + o.hg);
+    currentCtx.lineTo(o.x - (o.width / 2), o.y + o.height);
+    currentCtx.lineTo(o.x + (o.width / 2), o.y + o.height);
     currentCtx.lineTo(o.x, o.y);
   };
   
@@ -247,75 +251,6 @@ var _J_ = (function(c, l){
         canvas.addEventListener(e, function(event){}, false);
         break;
     };
-  };
-  
-  //Elements collision
-  var ObjectsCollision = function(first, x, y, other, x2, y2, isCentred){
-    x  = Math.round( x );
-    y  = Math.round( y );
-    x2 = Math.round( x2 );
-    y2 = Math.round( y2 );
-
-    var w  = first.width,
-        h  = first.height,
-        w2 = other.width,
-        h2 = other.height;
-
-    if ( isCentred ) {
-        x  -= ( w/2 + 0.5) << 0
-        y  -= ( h/2 + 0.5) << 0
-        x2 -= (w2/2 + 0.5) << 0
-        y2 -= (h2/2 + 0.5) << 0
-    };
-
-    var xMin = Math.max( x, x2 ),
-        yMin = Math.max( y, y2 ),
-        xMax = Math.min( x+w, x2+w2 ),
-        yMax = Math.min( y+h, y2+h2 );
-
-    if ( xMin >= xMax || yMin >= yMax ) {
-        return false;
-    };
-
-    var xDiff = xMax - xMin,
-        yDiff = yMax - yMin,
-        pixels  = first.data,
-        pixels2 = other.data;
-
-    if ( xDiff < 4 && yDiff < 4 ) {
-        for ( var pixelX = xMin; pixelX < xMax; pixelX++ ) {
-            for ( var pixelY = yMin; pixelY < yMax; pixelY++ ) {
-                if(
-                    ( pixels [ ((pixelX-x ) + (pixelY-y )*w )*4 + 3 ] !== 0 ) &&
-                    ( pixels2[ ((pixelX-x2) + (pixelY-y2)*w2)*4 + 3 ] !== 0 )
-                ){
-                    return true;
-                };
-            };
-        };
-    }else{
-        var incX = xDiff / 3.0,
-            incY = yDiff / 3.0;
-        incX = (~~incX === incX) ? incX : (incX+1 | 0);
-        incY = (~~incY === incY) ? incY : (incY+1 | 0);
-
-        for ( var offsetY = 0; offsetY < incY; offsetY++ ) {
-            for ( var offsetX = 0; offsetX < incX; offsetX++ ) {
-                for ( var pixelY = yMin+offsetY; pixelY < yMax; pixelY += incY ) {
-                    for ( var pixelX = xMin+offsetX; pixelX < xMax; pixelX += incX ) {
-                        if (
-                                ( pixels [ ((pixelX-x ) + (pixelY-y )*w )*4 + 3 ] !== 0 ) &&
-                                ( pixels2[ ((pixelX-x2) + (pixelY-y2)*w2)*4 + 3 ] !== 0 )
-                        ) {
-                            return true;
-                        };
-                    };
-                };
-            };
-        };
-    };
-
-    return false;
   };
 
  
@@ -390,4 +325,4 @@ var _J_ = (function(c, l){
       }
   };
   
-}(_J_Config, _J_Lang));
+}(SmartJ_Config, SmartJ_Lang));
