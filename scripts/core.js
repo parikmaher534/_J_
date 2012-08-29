@@ -17,6 +17,7 @@ var SmartJ = (function(c, l){
         "Groups": {}
       },
       PREDEFINE_EVENTS = ["click"],
+      STAGES           = {},
       MOUSE            = {width:5, height:5, x:0, y:0};
   
   
@@ -143,9 +144,32 @@ var SmartJ = (function(c, l){
     };
   };
   
+  //Create new canvas stage
+  var CreateStage = function(o){
+    if( !STAGES[o.id] ){
+      STAGES[o.id] = {};
+      
+      var c = document.createElement("canvas");
+      c.setAttribute("width", o.width);
+      c.setAttribute("height", o.height);
+      c.setAttribute("id", o.id);
+      var cCtx = c.getContext("2d");
+      
+      if( !o.parent ){
+        document.body.appendChild(c);
+      }else{
+        o.parent.appendChild(c);
+      };
+      
+      STAGES[o.id].canvas = c;
+      STAGES[o.id].ctx = cCtx;
+      
+      return STAGES[o.id];
+    };
+  };
+  
   //Draw element
   var DrawElement = function(e){
-    
     //Change to buffer
     currentCtx = bufferCtx;
     
@@ -169,7 +193,7 @@ var SmartJ = (function(c, l){
     currentCtx = ctx;
     currentCtx.drawImage(buffer, 0, 0);
     
-    e.data = currentCtx.getImageData(e.x, e.y, e.width || e.toX - e.x || e.radius*2, e.height || e.toY - e.y || e.radius*2 )
+    //e.data = currentCtx.getImageData(e.x, e.y, e.width || e.toX - e.x || e.radius*2, e.height || e.toY - e.y || e.radius*2 )
   };
   
   //Element styles
@@ -228,9 +252,11 @@ var SmartJ = (function(c, l){
   //Clear some area method
   var ClearArea = function(o){
     if( o ){
-      currentCtx.clearRect(o.x, o.y, o.width, o.height);
+      ctx.clearRect(o.x, o.y, o.width, o.height);
+      bufferCtx.clearRect(o.x, o.y, o.width, o.height);
     }else{
-      currentCtx.clearRect(0, 0, conf.width, conf.height);
+      ctx.clearRect(0, 0, conf.width, conf.height);
+      bufferCtx.clearRect(0, 0, conf.width, conf.height);
     };
   };
  
@@ -285,6 +311,17 @@ var SmartJ = (function(c, l){
        * Container with all elements and groups of elements
        */
       Elements: STACK,
+      
+      /**
+       * List of canvas stages
+       */
+      Stages: STAGES,
+    
+      Stage: {
+        Create: function(o){ CreateStage(o) },
+        Set: function(id){ currentCtx = STAGES[id].ctx; },
+        Remove: function(id){ delete STAGES[id]; }
+      },
     
       Create: {
         /**

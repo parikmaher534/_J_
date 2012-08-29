@@ -33,7 +33,10 @@ SmartJ.Timer = (function(){
 
   /**
    * Start method - add new action to stack
-   * @param object Object with name and action function
+   * @param object Object with params:
+   * action  - callback function;
+   * name    - timer object ID
+   * destroy - callback on object destroy
    */
   this.start = function(object){
     var match = 0,

@@ -9,26 +9,7 @@
     <script src="scripts/modules/timer.js"></script>
     <script>
       window.onload = function(){
-        for( var i = 0; i < 10; i++ ){
-          SmartJ.Create.Object("circle",{
-            x: Math.random() * SmartJ_Config.width,
-            y: Math.random() * SmartJ_Config.height,
-            radius: Math.random() * 15,
-            fill: true,
-            style:{
-              fillStyle: "green"
-            }
-          });
-        };
-
-        SmartJ.Render.All();
-        
-        SmartJ.Timer().start({
-          name: "a",
-          action: function(){
-            
-          }
-        });
+        SmartJ.Stage.Create({id:"balls", width:700, height:400});
       };
     </script>
   </head>
