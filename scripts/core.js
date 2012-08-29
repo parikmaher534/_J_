@@ -380,7 +380,11 @@ var SmartJ = (function(c, l){
          * @param o Object with list of groups o size parameters
          * o: groups, size;
          */
-        Stage: function(o){ ClearArea(o); }
+        Stage: function(o){ ClearArea(o); },
+        /**
+         * Clear BUFFER
+         */
+        Buffer: function(){ buffer.width = buffer.width; }
       },
       
       Event: {
