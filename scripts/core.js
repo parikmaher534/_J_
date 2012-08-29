@@ -11,14 +11,13 @@ var SmartJ = (function(c, l){
       buffer           = null,
       ctx              = null,
       bufferCtx        = null,
-      bufferGroups     = [],
       currentCtx       = null,      //Current canvas ( plot || buffer )
       STACK            = {
         "Common": [],
         "Groups": {}
       },
       PREDEFINE_EVENTS = ["click"],
-      MOUSE            = {width:10, height:20, x:0, y:0};
+      MOUSE            = {width:5, height:5, x:0, y:0};
   
   
   
@@ -47,8 +46,9 @@ var SmartJ = (function(c, l){
       };
       
       CreateBuffer();
-      
       currentCtx = ctx;
+      MouseData();
+      
     }, false);
   }(conf, lang));
   
@@ -58,6 +58,20 @@ var SmartJ = (function(c, l){
   
   
   /* Common inside methods */
+  //Create MOUSE data
+  var MouseData = function(){
+    var d = currentCtx.createImageData(MOUSE.width, MOUSE.height);
+    for( var i = 0; i < d.data.length; i++ ){
+      d.data[i] = 255;
+    };
+    MOUSE.data = d;
+  };
+  
+  //Set MOUSE coordinates
+  var SetMousePosition = function(e){
+    MOUSE.x = e.pageX - canvas.offsetLeft;
+    MOUSE.y = e.pageY - canvas.offsetTop;
+  };
   
   //Add object to stack object
   var AddObjectToStack = function(t, o, g){
@@ -223,9 +237,12 @@ var SmartJ = (function(c, l){
   //Add trigget to element
   var AddEventOnObject = function(o, e, data){
     e = e.split(" ");
+    
     for( var i = 0; i < e.length; i++ ){
-      for( var j = 0; j < o.events[e[i]].length; j++){
-        o.events[e[i]][j](data);
+      if( o.events ){
+        for( var j = 0; j < o.events[e[i]].length; j++){
+          o.events[e[i]][j](data);
+        };
       };
     };
   };
@@ -248,18 +265,16 @@ var SmartJ = (function(c, l){
   var DefaultEvent = function(e, o, callback){
     switch(e){
       case "click":
-        canvas.addEventListener(e, function(event){}, false);
+        canvas.addEventListener(e, function(event){
+          SetMousePosition(event);
+          if( SmartJ.ObjectsCollision({element: MOUSE, toObject: o}) ) callback(event, o);
+        }, false);
         break;
     };
   };
 
  
- 
- 
- 
-  
-  
-  
+
   
   
   /**
