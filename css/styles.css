@@ -2,3 +2,8 @@
   border:1px solid #CCC;
   background: #EEE;
 }
+#balls,#plot,#Triangle{
+  position:absolute;
+  left:0px;
+  top:0px;
+}

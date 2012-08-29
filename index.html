@@ -9,7 +9,21 @@
     <script src="scripts/modules/timer.js"></script>
     <script>
       window.onload = function(){
-        SmartJ.Stage.Create({id:"balls", width:700, height:400});
+        var Balls = SmartJ.Stage.Create({id:"balls", width:700, height:400});
+        var Triangle = SmartJ.Stage.Create({id:"triangle", width:700, height:400});
+        
+        var c = SmartJ.Create.Object("circle",{x:120, y:120, radius:50, stage:Balls.ctx });
+        var t = SmartJ.Create.Object("triangle",{x:120, y:120, width:50, height:30, stage:Triangle.ctx });
+        
+        SmartJ.Timer().start({
+          name: "render",
+          action:function(){
+            c.x += 1;
+            t.x += 0.8;
+            SmartJ.Clear.All("balls triangle");
+            SmartJ.Render.All();
+          }
+        });
       };
     </script>
   </head>

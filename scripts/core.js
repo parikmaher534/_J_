@@ -170,6 +170,7 @@ var SmartJ = (function(c, l){
   
   //Draw element
   var DrawElement = function(e){
+    
     //Change to buffer
     currentCtx = bufferCtx;
     
@@ -190,10 +191,11 @@ var SmartJ = (function(c, l){
     currentCtx.stroke();
     currentCtx.restore();
 
-    currentCtx = ctx;
+    currentCtx = e.stage || ctx;
     currentCtx.drawImage(buffer, 0, 0);
+    buffer.width = buffer.width;
     
-    //e.data = currentCtx.getImageData(e.x, e.y, e.width || e.toX - e.x || e.radius*2, e.height || e.toY - e.y || e.radius*2 )
+    e.data = currentCtx.getImageData(e.x, e.y, e.width || e.toX - e.x || e.radius*2, e.height || e.toY - e.y || e.radius*2 )
   };
   
   //Element styles
@@ -250,11 +252,18 @@ var SmartJ = (function(c, l){
   };
   
   //Clear some area method
-  var ClearArea = function(o){
+  var ClearArea = function(o, s){
     if( o ){
-      ctx.clearRect(o.x, o.y, o.width, o.height);
-      bufferCtx.clearRect(o.x, o.y, o.width, o.height);
+      if( o.constructor === String ){
+        o = o.split(" ");
+        for( var i = 0; i < o.length; i++ ){
+          STAGES[o[i]].ctx.clearRect(STAGES[o[i]].canvas.offsetLeft, STAGES[o[i]].canvas.offsetTop, STAGES[o[i]].canvas.offsetWidth, STAGES[o[i]].canvas.offsetHeight);
+        };
+      };
+      ctx.clearRect(canvas.offsetLeft, canvas.offsetTop, canvas.offsetWidth, canvas.offsetHeight);
+      bufferCtx.clearRect(buffer.offsetLeft, buffer.offsetTop, buffer.offsetWidth, buffer.offsetHeight);
     }else{
+      currentCtx.clearRect(0, 0, conf.width, conf.height);
       ctx.clearRect(0, 0, conf.width, conf.height);
       bufferCtx.clearRect(0, 0, conf.width, conf.height);
     };
@@ -318,7 +327,7 @@ var SmartJ = (function(c, l){
       Stages: STAGES,
     
       Stage: {
-        Create: function(o){ CreateStage(o) },
+        Create: function(o){ return CreateStage(o) },
         Set: function(id){ currentCtx = STAGES[id].ctx; },
         Remove: function(id){ delete STAGES[id]; }
       },
@@ -357,12 +366,12 @@ var SmartJ = (function(c, l){
         /**
          * Clear all canvas
          */
-        All: function(){ ClearArea(); },
+        All: function(o, s){ ClearArea(o, s); },
         /**
          * Clear special area
          * @param o Object with x,y,width,height parameters
          */
-        Area: function(o){ ClearArea(o); }
+        Area: function(o, s){ ClearArea(o, s); }
       },
       
       Event: {
