@@ -281,6 +281,11 @@ var SmartJ = (function(c, l){
    * Return library API
    */
   return {
+      /**
+       * Container with all elements and groups of elements
+       */
+      Elements: STACK,
+    
       Create: {
         /**
          * Add object to stack of elements

@@ -6,15 +6,28 @@
     <script src="scripts/config/configs.js"></script>
     <script src="scripts/core.js"></script>
     <script src="scripts/modules/collision.js"></script>
+    <script src="scripts/modules/timer.js"></script>
     <script>
       window.onload = function(){
-        var r = SmartJ.Create.Object("rect",{x: 145, y:75, width: 26, height: 26, fill:true, style:{fillStyle:"green"}}, "ss");
-        var t = SmartJ.Create.Object("triangle",{x: 170, y:98, width: 15, height: 15, fill:true, style:{fillStyle:"red"}}, "test");
-        
+        for( var i = 0; i < 10; i++ ){
+          SmartJ.Create.Object("circle",{
+            x: Math.random() * SmartJ_Config.width,
+            y: Math.random() * SmartJ_Config.height,
+            radius: Math.random() * 15,
+            fill: true,
+            style:{
+              fillStyle: "green"
+            }
+          });
+        };
+
         SmartJ.Render.All();
         
-        SmartJ.Event.On("click", t, function(e, data){
-          console.log("Event", e, data)
+        SmartJ.Timer().start({
+          name: "a",
+          action: function(){
+            
+          }
         });
       };
     </script>
