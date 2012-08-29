@@ -8,6 +8,8 @@
  */
 SmartJ.ObjectsCollision = (function(objects){
   
+  "use strict";
+  
   /**
    * Objects interface
    * x - Object X position in px

@@ -1,9 +1,14 @@
 /**
+ *
  * Timer Module
  * This timer can be used for animations and any dynamic actions
  * @return object API: start, remove, stop methods
+ * 
  */
 SmartJ.Timer = (function(){
+  
+  "use strict";
+  
   var stack = [],
       timer = null,
       tm    = this;
