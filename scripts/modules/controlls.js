@@ -7,6 +7,8 @@
  */
 SmartJ.Controlls = (function(){
   
+  "use strict";
+  
   //Check on predefine UP,DOWN,LEFT,RIGHT events
   var KeySet = function(key, e, callback){
       switch(key.toLowerCase()){
@@ -19,7 +21,7 @@ SmartJ.Controlls = (function(){
         case "left":
           key = 37; break;
       };
-      if( key == e.keyCode || String(key).toLowerCase() == String.fromCharCode(e.keyCode).toLowerCase()) callback();
+      if( key == e.keyCode || String(key).toLowerCase() == String.fromCharCode(e.keyCode).toLowerCase()) callback(key, e);
   };
   
   //Key down event

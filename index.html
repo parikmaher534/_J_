@@ -15,15 +15,29 @@
         
         var c = SmartJ.Create.Object("circle",{x:120, y:120, radius:50, stage:Balls.ctx, fill:true, style:{fillStyle:"yellow"}}, "test");
         var t = SmartJ.Create.Object("triangle",{x:120, y:120, width:50, height:30, stage:Triangle.ctx, fill:true, style:{fillStyle:"green"}}, "go");
-        
-        
+
+        var Timer = new SmartJ.Timer();
+
         SmartJ.Render.All();
         
-        
         SmartJ.Controlls().KeyDown("H", function(){
-          c.y -= 10;
-          SmartJ.Clear.Stage();
-          SmartJ.Render.All();
+          Timer.start({
+            name: "Circle",
+            action: function(){
+              c.y -= 0.5;
+              t.x += 0.5;
+              SmartJ.Clear.Stage({groups: "balls triangle"});
+              SmartJ.Render.All();
+            }
+          });
+        });
+        
+        SmartJ.Controlls().KeyUp("H", function(){
+          SmartJ.Event.Trigger(c, "stop");
+        });
+        
+        SmartJ.Event.On("stop", c ,function(){
+          Timer.remove("Circle");
         });
       };
     </script>

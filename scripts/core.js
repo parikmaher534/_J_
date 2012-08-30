@@ -262,7 +262,7 @@ var SmartJ = (function(c, l){
   
   //Clear some area method
   var ClearArea = function(o){
-    if( !o || Object.keys(o).length == 0 ){
+    if( !o ){
       for( var i in STAGES ){
         STAGES[i].ctx.clearRect(0, 0, STAGES[i].canvas.offsetWidth, STAGES[i].canvas.offsetHeight);
       };
