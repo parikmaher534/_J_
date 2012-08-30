@@ -29,6 +29,14 @@ var SmartJ = (function(c, l){
   
   
   /**
+   * Resources loader
+   */
+  var ResourcesLoader = function(){
+    
+  };
+  
+  
+  /**
    * Canvas initialization point
    */
   ;(function(c, l){
@@ -110,6 +118,19 @@ var SmartJ = (function(c, l){
         if( o.x && o.y && o.width && o.height ) return 1; break;
       case "circle":
         if( o.x && o.y && o.radius ) return 1; break;  
+      case "image":
+        if( o.src && o.x && o.y && o.width && o.height ) {
+          CreateIMG(o); return 1; break;  
+        };
+    };
+  };
+  
+  //Create Image object
+  var CreateIMG = function(o){
+    var i = new Image();
+    i.src = o.src;
+    i.onload = function(){
+      o.img = i;
     };
   };
   
@@ -193,6 +214,8 @@ var SmartJ = (function(c, l){
           DrawCircle(e); break;
         case "triangle":
           DrawTriangle(e); break;
+        case "image":
+          DrawImage(e); break;
       };
       if( e.fill ) currentCtx.fill();
       currentCtx.stroke();
@@ -257,6 +280,11 @@ var SmartJ = (function(c, l){
     currentCtx.lineTo(o.x - (o.width / 2), o.y + o.height);
     currentCtx.lineTo(o.x + (o.width / 2), o.y + o.height);
     currentCtx.lineTo(o.x, o.y);
+  };
+  
+  //Draw image
+  var DrawImage = function(o){
+    currentCtx.drawImage(o.img, o.x, o.y);
   };
   
   
