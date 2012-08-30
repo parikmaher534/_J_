@@ -18,7 +18,8 @@ var SmartJ = (function(c, l){
       },
       PREDEFINE_EVENTS = ["click"],
       STAGES           = {},
-      MOUSE            = {width:5, height:5, x:0, y:0};
+      MOUSE            = {width:5, height:5, x:0, y:0},
+      IMAGES           = {};
   
   
   
@@ -375,6 +376,13 @@ var SmartJ = (function(c, l){
        * List of canvas stages
        */
       Stages: STAGES,
+      
+      /**
+       * Object with resources
+       */
+      Resources: {
+        Images: IMAGES
+      },
     
       Stage: {
         Create: function(o){ return CreateStage(o) },
