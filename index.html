@@ -18,7 +18,11 @@
         SmartJ.Create.Object("image", {src:"images/test.png", x: 100, y:100, width:100, height:100, stage: HeroStage.ctx}, "hero-group");
         
         //Render hero
-        SmartJ.Render.Group("hero-group");
+        //SmartJ.Render.Group("hero-group");
+        
+        SmartJ.OnResourceLoad(function(){
+          SmartJ.Render.Group("hero-group");
+        });
       };
     </script>
   </head>

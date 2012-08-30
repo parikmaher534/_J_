@@ -4,6 +4,9 @@ var SmartJ_Config = {
     height      : 400,
     
     images      : {
-        hero : "images/test.png"
+        hero : "images/test.png",
+        bg1 : "images/1.png",
+        bg2 : "images/2.png",
+        bg3 : "images/3.png"
     }
 };

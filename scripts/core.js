@@ -32,8 +32,19 @@ var SmartJ = (function(c, l){
   /**
    * Resources loader
    */
-  var ResourcesLoader = function(){
-    
+  var ResourcesLoader = function(callback){
+    var img,
+        ln      = Object.keys(SmartJ_Config.images).length,
+        counter = 0;
+        
+    for( var i in SmartJ_Config.images ){
+      img = new Image();
+      img.src = SmartJ_Config.images[i];
+      img.onload = function(){
+        counter++;
+        if( counter == ln ) callback();
+      };
+    };
   };
   
   
@@ -43,7 +54,7 @@ var SmartJ = (function(c, l){
   ;(function(c, l){
     window.addEventListener("load", function(){
       canvas = document.getElementById(c.canvasId);
-      
+
       if( canvas ){
         canvas.setAttribute("width", c.width);
         canvas.setAttribute("height", c.height);
@@ -58,12 +69,11 @@ var SmartJ = (function(c, l){
         };
       };
 
-      
       CreateBuffer();
       currentCtx = ctx;
       MouseData();
-      
-    }, false);
+
+    }, false);  
   }(conf, lang));
   
   
@@ -382,6 +392,12 @@ var SmartJ = (function(c, l){
        */
       Resources: {
         Images: IMAGES
+      },
+    
+      OnResourceLoad: function(callback){
+        ResourcesLoader(function(){
+          callback();
+        });
       },
     
       Stage: {
