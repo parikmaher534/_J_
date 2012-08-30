@@ -34,17 +34,21 @@ var SmartJ = (function(c, l){
   ;(function(c, l){
     window.addEventListener("load", function(){
       canvas = document.getElementById(c.canvasId);
-      canvas.setAttribute("width", c.width);
-      canvas.setAttribute("height", c.height);
+      
       if( canvas ){
-        if( canvas.getContext ){
-          ctx = canvas.getContext("2d");
+        canvas.setAttribute("width", c.width);
+        canvas.setAttribute("height", c.height);
+        if( canvas ){
+          if( canvas.getContext ){
+            ctx = canvas.getContext("2d");
+          }else{
+            ERROR(l.noctx);
+          };
         }else{
-          ERROR(l.noctx);
+          ERROR(l.nocanvas);
         };
-      }else{
-        ERROR(l.nocanvas);
       };
+
       
       CreateBuffer();
       currentCtx = ctx;
@@ -61,11 +65,13 @@ var SmartJ = (function(c, l){
   /* Common inside methods */
   //Create MOUSE data
   var MouseData = function(){
-    var d = currentCtx.createImageData(MOUSE.width, MOUSE.height);
-    for( var i = 0; i < d.data.length; i++ ){
-      d.data[i] = 255;
+    if( currentCtx ){
+      var d = currentCtx.createImageData(MOUSE.width, MOUSE.height);
+      for( var i = 0; i < d.data.length; i++ ){
+        d.data[i] = 255;
+      };
+      MOUSE.data = d;
     };
-    MOUSE.data = d;
   };
   
   //Set MOUSE coordinates
@@ -169,33 +175,35 @@ var SmartJ = (function(c, l){
   };
   
   //Draw element
-  var DrawElement = function(e){
-    
-    //Change to buffer
-    currentCtx = bufferCtx;
-    
-    currentCtx.save();
-    currentCtx.beginPath();
-    ElementStyles(e);
-    switch(e.type){
-      case "line":
-        DrawLine(e); break;
-      case "rect":
-        DrawRect(e); break;
-      case "circle":
-        DrawCircle(e); break;
-      case "triangle":
-        DrawTriangle(e); break;
-    };
-    if( e.fill ) currentCtx.fill();
-    currentCtx.stroke();
-    currentCtx.restore();
+  var DrawElement = function(e){    
+    if( e.stage || ctx ){
 
-    currentCtx = e.stage || ctx;
-    currentCtx.drawImage(buffer, 0, 0);
-    buffer.width = buffer.width;
-    
-    e.data = currentCtx.getImageData(e.x, e.y, e.width || e.toX - e.x || e.radius*2, e.height || e.toY - e.y || e.radius*2 )
+      //Change to buffer
+      currentCtx = bufferCtx;
+
+      currentCtx.save();
+      currentCtx.beginPath();
+      ElementStyles(e);
+      switch(e.type){
+        case "line":
+          DrawLine(e); break;
+        case "rect":
+          DrawRect(e); break;
+        case "circle":
+          DrawCircle(e); break;
+        case "triangle":
+          DrawTriangle(e); break;
+      };
+      if( e.fill ) currentCtx.fill();
+      currentCtx.stroke();
+      currentCtx.restore();
+
+      currentCtx = e.stage || ctx;
+      currentCtx.drawImage(buffer, 0, 0);
+      buffer.width = buffer.width;
+
+      e.data = currentCtx.getImageData(e.x, e.y, e.width || e.toX - e.x || e.radius*2, e.height || e.toY - e.y || e.radius*2 );
+    };
   };
   
   //Element styles
@@ -258,7 +266,7 @@ var SmartJ = (function(c, l){
       for( var i in STAGES ){
         STAGES[i].ctx.clearRect(0, 0, STAGES[i].canvas.offsetWidth, STAGES[i].canvas.offsetHeight);
       };
-      bufferCtx.clearRect(0, 0, conf.width, conf.height);
+      if( ctx ) ctx.clearRect(0, 0, conf.width, conf.height);
     }else{
       
       //Clear All on next groups
@@ -279,6 +287,8 @@ var SmartJ = (function(c, l){
         };
       };
     };
+    
+    bufferCtx.clearRect(0, 0, conf.width, conf.height);
   };
  
   //Add trigget to element
