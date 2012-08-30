@@ -7,22 +7,23 @@
     <script src="scripts/core.js"></script>
     <script src="scripts/modules/collision.js"></script>
     <script src="scripts/modules/timer.js"></script>
+    <script src="scripts/modules/controlls.js"></script>
     <script>
       window.onload = function(){
         var Balls = SmartJ.Stage.Create({id:"balls", width:700, height:400});
         var Triangle = SmartJ.Stage.Create({id:"triangle", width:700, height:400});
         
-        var c = SmartJ.Create.Object("circle",{x:120, y:120, radius:50, stage:Balls.ctx, fill:true, style:{fillStyle:"yellow"} });
-        var t = SmartJ.Create.Object("triangle",{x:120, y:120, width:50, height:30, stage:Triangle.ctx, fill:true, style:{fillStyle:"green"} });
+        var c = SmartJ.Create.Object("circle",{x:120, y:120, radius:50, stage:Balls.ctx, fill:true, style:{fillStyle:"yellow"}}, "test");
+        var t = SmartJ.Create.Object("triangle",{x:120, y:120, width:50, height:30, stage:Triangle.ctx, fill:true, style:{fillStyle:"green"}}, "go");
         
-        SmartJ.Timer().start({
-          name: "render",
-          action:function(){
-            c.x += 1;
-            t.x += 0.8;
-            SmartJ.Clear.Stage();
-            SmartJ.Render.All();
-          }
+        
+        SmartJ.Render.All();
+        
+        
+        SmartJ.Controlls().KeyDown("H", function(){
+          c.y -= 10;
+          SmartJ.Clear.Stage();
+          SmartJ.Render.All();
         });
       };
     </script>
