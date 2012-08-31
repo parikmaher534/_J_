@@ -9,20 +9,15 @@
     <script src="scripts/modules/timer.js"></script>
     <script src="scripts/modules/controlls.js"></script>
     <script>
-
-      
       SmartJ.Event.On("resourceload", SmartJ, function(data){
 
         SmartJ.Create.Object("image", {src:"hero", x: 0, y:0, width:100, height:100, stage: "plot"}, "images");
 
         SmartJ.Create.Object("rect", {x: 230, y:100, width:100, height:100, stage: "plot"});
         
-        SmartJ.Create.Object("rect", {x: 100, y:100, width:100, height:100, stage: "plot"});
-
         SmartJ.Render.All();
+
       });
-      
-      
     </script>
   </head>
   <body>

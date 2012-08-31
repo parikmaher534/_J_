@@ -11,7 +11,7 @@ var SmartJ = (function(c, l){
       buffer           = null,
       ctx              = null,
       bufferCtx        = null,
-      currentCtx       = null,      //Current canvas ( plot || buffer )
+      currentCtx       = null,
       STACK            = {
         "Common": [],
         "Groups": {}
@@ -37,8 +37,6 @@ var SmartJ = (function(c, l){
         
     for( var i in SmartJ_Config.images ){
       img = new Image();
-      img.src = SmartJ_Config.images[i];
-      
       img.onload = (function(i){
         counter++;
         IMAGES[i] = img;
@@ -46,6 +44,7 @@ var SmartJ = (function(c, l){
           AddEventOnObject(SmartJ, "resourceload", {"stages": STAGES, "images": IMAGES, "elements": STACK});
         };
       }(i));
+      img.src = SmartJ_Config.images[i];
     };
   };
   
@@ -99,7 +98,7 @@ var SmartJ = (function(c, l){
   /**
    * Canvas initialization point
    */
-  ;(function(c, l){
+  ;(function(){
     window.addEventListener("load", function(){
       
       //Create buffer
@@ -219,7 +218,6 @@ var SmartJ = (function(c, l){
       buffer.setAttribute("height", h);
       buffer.id = "buffer";
       bufferCtx = buffer.getContext("2d");
-      //document.body.appendChild(buffer)
     };
   };
   
@@ -247,6 +245,7 @@ var SmartJ = (function(c, l){
         case "image":
           DrawImage(e); break;
       };
+      
       if( e.fill ) currentCtx.fill();
       currentCtx.stroke();
       currentCtx.restore();
@@ -315,7 +314,6 @@ var SmartJ = (function(c, l){
   
   //Draw image
   var DrawImage = function(o){
-    console.log(currentCtx, o)
     currentCtx.drawImage(IMAGES[o.src], o.x, o.y);
   };
   
