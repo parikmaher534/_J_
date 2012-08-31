@@ -2,8 +2,11 @@
   border:1px solid #CCC;
   background: #EEE;
 }
-#hero,#plot{
+#balls,#plot{
   position:absolute;
   left:0px;
   top:0px;
+}
+#buffer{
+  margin-left: 720px
 }

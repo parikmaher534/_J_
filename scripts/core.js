@@ -29,10 +29,8 @@ var SmartJ = (function(c, l){
   var ERROR = function(e){console.log(e);};
   
   
-  /**
-   * Resources loader
-   */
-  var ResourcesLoader = function(callback){
+  //Resources loader
+  var ResourcesLoader = function(){
     var img,
         ln      = Object.keys(SmartJ_Config.images).length,
         counter = 0;
@@ -40,12 +38,62 @@ var SmartJ = (function(c, l){
     for( var i in SmartJ_Config.images ){
       img = new Image();
       img.src = SmartJ_Config.images[i];
-      img.onload = function(){
+      
+      img.onload = (function(i){
         counter++;
-        if( counter == ln ) callback();
-      };
+        IMAGES[i] = img;
+        if( counter == ln ) {
+          AddEventOnObject(SmartJ, "resourceload", {"stages": STAGES, "images": IMAGES, "elements": STACK});
+        };
+      }(i));
     };
   };
+  
+  //Get element
+  var GetElement = function(s){
+    if( s.substr(0, 1) == "#" ){
+      return document.getElementById(s.substr(1, s.length - 1));
+    };
+  };
+  
+  //Create new canvas stage
+  var CreateStage = function(o){
+    if( !STAGES[o.id] ){
+      STAGES[o.id] = {};
+      var c;
+      
+      if( document.getElementById(o.id) ){
+        c = document.getElementById(o.id);
+      }else{
+        c = document.createElement("canvas");
+        c.setAttribute("width", o.width);
+        c.setAttribute("height", o.height);
+        c.setAttribute("id", o.id);
+        !o.parent ? document.body.appendChild(c) : GetElement(o.parent).appendChild(c);
+      };
+      
+      var cCtx = c.getContext("2d");
+      STAGES[o.id].canvas = c;
+      STAGES[o.id].ctx = cCtx;
+      
+      return STAGES[o.id];
+    };
+  };
+  
+  //Stage creator
+  var LoadStages = function(){
+    var s;
+    for( var i in SmartJ_Config.stages ){
+      s = SmartJ_Config.stages;
+      CreateStage({
+        width: s[i].width,
+        height: s[i].height,
+        id: i,
+        parent: s[i].to
+      });
+    };
+  };
+  
   
   
   /**
@@ -53,26 +101,19 @@ var SmartJ = (function(c, l){
    */
   ;(function(c, l){
     window.addEventListener("load", function(){
-      canvas = document.getElementById(c.canvasId);
-
-      if( canvas ){
-        canvas.setAttribute("width", c.width);
-        canvas.setAttribute("height", c.height);
-        if( canvas ){
-          if( canvas.getContext ){
-            ctx = canvas.getContext("2d");
-          }else{
-            ERROR(l.noctx);
-          };
-        }else{
-          ERROR(l.nocanvas);
-        };
-      };
-
+      
+      //Create buffer
       CreateBuffer();
-      currentCtx = ctx;
-      MouseData();
+      
+      //On stages load
+      LoadStages();
 
+      //Set mouse data
+      MouseData();
+      
+      //Load all resources
+      ResourcesLoader();
+      
     }, false);  
   }(conf, lang));
   
@@ -122,26 +163,15 @@ var SmartJ = (function(c, l){
   var CheckObjectParams = function(t, o){
     switch(t){
       case "line":
-        if( o.x && o.y && o.toX && o.toY ) return 1; break;
+        if( o.x != undefined  && o.y != undefined  && o.toX && o.toY ) return 1; break;
       case "rect":
-        if( o.x && o.y && o.width && o.height ) return 1; break;
+        if( o.x != undefined  && o.y != undefined  && o.width && o.height ) return 1; break;
       case "triangle":
-        if( o.x && o.y && o.width && o.height ) return 1; break;
+        if( o.x != undefined  && o.y != undefined  && o.width && o.height ) return 1; break;
       case "circle":
-        if( o.x && o.y && o.radius ) return 1; break;  
+        if( o.x != undefined  && o.y != undefined  && o.radius ) return 1; break;  
       case "image":
-        if( o.src && o.x && o.y && o.width && o.height ) {
-          CreateIMG(o); return 1; break;  
-        };
-    };
-  };
-  
-  //Create Image object
-  var CreateIMG = function(o){
-    var i = new Image();
-    i.src = o.src;
-    i.onload = function(){
-      o.img = i;
+        if( o.src && o.x != undefined && o.y != undefined  && o.width && o.height ) return 1; break;  
     };
   };
   
@@ -173,43 +203,32 @@ var SmartJ = (function(c, l){
   };
   
   //Create canvas buffer
-  var CreateBuffer = function(){
+  var CreateBuffer = function(){    
     if( !buffer ){
+      
+      //Get max params for buffer
+      var w = 0,
+          h = 0;
+      for( var i in SmartJ_Config.stages ){
+        if( SmartJ_Config.stages[i].width > w ) w = SmartJ_Config.stages[i].width;
+        if( SmartJ_Config.stages[i].height > h ) h = SmartJ_Config.stages[i].height;
+      };
+      
       buffer = document.createElement("canvas");
-      buffer.setAttribute("width", conf.width);
-      buffer.setAttribute("height", conf.height);
+      buffer.setAttribute("width", w);
+      buffer.setAttribute("height", h);
+      buffer.id = "buffer";
       bufferCtx = buffer.getContext("2d");
+      //document.body.appendChild(buffer)
     };
   };
   
-  //Create new canvas stage
-  var CreateStage = function(o){
-    if( !STAGES[o.id] ){
-      STAGES[o.id] = {};
-      
-      var c = document.createElement("canvas");
-      c.setAttribute("width", o.width);
-      c.setAttribute("height", o.height);
-      c.setAttribute("id", o.id);
-      var cCtx = c.getContext("2d");
-      
-      if( !o.parent ){
-        document.body.appendChild(c);
-      }else{
-        o.parent.appendChild(c);
-      };
-      
-      STAGES[o.id].canvas = c;
-      STAGES[o.id].ctx = cCtx;
-      
-      return STAGES[o.id];
-    };
-  };
+
   
   //Draw element
   var DrawElement = function(e){    
-    if( e.stage || ctx ){
-
+    if( e.stage ){
+      
       //Change to buffer
       currentCtx = bufferCtx;
 
@@ -232,7 +251,8 @@ var SmartJ = (function(c, l){
       currentCtx.stroke();
       currentCtx.restore();
 
-      currentCtx = e.stage || ctx;
+      currentCtx = STAGES[e.stage].ctx;
+      
       currentCtx.drawImage(buffer, 0, 0);
       buffer.width = buffer.width;
 
@@ -295,7 +315,8 @@ var SmartJ = (function(c, l){
   
   //Draw image
   var DrawImage = function(o){
-    currentCtx.drawImage(o.img, o.x, o.y);
+    console.log(currentCtx, o)
+    currentCtx.drawImage(IMAGES[o.src], o.x, o.y);
   };
   
   
@@ -378,34 +399,14 @@ var SmartJ = (function(c, l){
    */
   return {
       /**
-       * Container with all elements and groups of elements
-       */
-      Elements: STACK,
-      
-      /**
-       * List of canvas stages
-       */
-      Stages: STAGES,
-      
-      /**
-       * Object with resources
+       * All resources
        */
       Resources: {
-        Images: IMAGES
+        Images: IMAGES,
+        Stages: STAGES,
+        Elements: STACK
       },
-    
-      OnResourceLoad: function(callback){
-        ResourcesLoader(function(){
-          callback();
-        });
-      },
-    
-      Stage: {
-        Create: function(o){ return CreateStage(o) },
-        Set: function(id){ currentCtx = STAGES[id].ctx; },
-        Remove: function(id){ delete STAGES[id]; }
-      },
-    
+      
       Create: {
         /**
          * Add object to stack of elements
