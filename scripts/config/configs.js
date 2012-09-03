@@ -11,7 +11,8 @@ var SmartJ_Config = {
         hero : "images/test.png",
         bg1 : "images/1.png",
         bg2 : "images/2.png",
-        bg3 : "images/3.png"
+        bg3 : "images/3.png",
+        barbarian : "images/barbarian.png"
     }
     
 };

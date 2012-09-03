@@ -41,7 +41,9 @@ var SmartJ = (function(c, l){
         counter++;
         IMAGES[i] = img;
         if( counter == ln ) {
-          AddEventOnObject(SmartJ, "resourceload", {"stages": STAGES, "images": IMAGES, "elements": STACK});
+          setTimeout(function(){
+            AddEventOnObject(SmartJ, "load", {"stages": STAGES, "images": IMAGES, "elements": STACK});
+          }, 1);
         };
       }(i));
       img.src = SmartJ_Config.images[i];
@@ -171,6 +173,8 @@ var SmartJ = (function(c, l){
         if( o.x != undefined  && o.y != undefined  && o.radius ) return 1; break;  
       case "image":
         if( o.src && o.x != undefined && o.y != undefined  && o.width && o.height ) return 1; break;  
+      case "frame":
+        if( o.src && o.sx != undefined && o.sy != undefined  && o.sWidth && o.sHeight && o.dx && o.dy && o.dWidth && o.dHeight ) return 1; break;  
     };
   };
   
@@ -244,6 +248,8 @@ var SmartJ = (function(c, l){
           DrawTriangle(e); break;
         case "image":
           DrawImage(e); break;
+        case "frame":
+          DrawFrame(e); break;
       };
       
       if( e.fill ) currentCtx.fill();
@@ -255,7 +261,7 @@ var SmartJ = (function(c, l){
       currentCtx.drawImage(buffer, 0, 0);
       buffer.width = buffer.width;
 
-      e.data = currentCtx.getImageData(e.x, e.y, e.width || e.toX - e.x || e.radius*2, e.height || e.toY - e.y || e.radius*2 );
+      e.data = currentCtx.getImageData(e.x || e.dx, e.y || e.dy, e.width || e.toX - e.x || e.radius*2 || e.sWidth, e.height || e.toY - e.y || e.radius*2 || e.sHeight );
     };
   };
   
@@ -315,6 +321,11 @@ var SmartJ = (function(c, l){
   //Draw image
   var DrawImage = function(o){
     currentCtx.drawImage(IMAGES[o.src], o.x, o.y);
+  };
+  
+  //Draw image frame
+  var DrawFrame = function(o){
+    currentCtx.drawImage(IMAGES[o.src], o.sx, o.sy, o.sWidth, o.sHeight, o.dx, o.dy, o.dWidth, o.dHeight)
   };
   
   
@@ -412,7 +423,7 @@ var SmartJ = (function(c, l){
          * @param object List of element params
          * @return object
          */
-        Object: function(type, object, group){ return AddObjectToStack(type, object, group); }
+        Object: function(type, object, group){ return AddObjectToStack(type, object, group); },
       },
       
       Render: {
