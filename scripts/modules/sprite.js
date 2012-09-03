@@ -24,7 +24,11 @@ SmartJ.Sprite = (function(o, g){
         //Additional
         frames: o.frames,
         speed: o.speed,
-        vector: o.vector
+        vector: o.vector,
+        x: o.x,
+        y: o.y,
+        width: o.width,
+        height: o.height
       },
       sprite = lib.Create.Object("frame", obj, g);
   
@@ -54,13 +58,6 @@ SmartJ.Sprite = (function(o, g){
     }
   });
   
-  
-  /**
-   * Sprite API
-   */
-  return {  
-    Start: function(){ },
-    Stop: function(){ }
-  };
+  return obj;
 });
 

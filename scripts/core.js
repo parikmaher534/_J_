@@ -61,17 +61,12 @@ var SmartJ = (function(c, l){
   var CreateStage = function(o){
     if( !STAGES[o.id] ){
       STAGES[o.id] = {};
-      var c;
       
-      if( document.getElementById(o.id) ){
-        c = document.getElementById(o.id);
-      }else{
-        c = document.createElement("canvas");
-        c.setAttribute("width", o.width);
-        c.setAttribute("height", o.height);
-        c.setAttribute("id", o.id);
-        !o.parent ? document.body.appendChild(c) : GetElement(o.parent).appendChild(c);
-      };
+      var c = document.createElement("canvas");
+      c.setAttribute("width", o.width);
+      c.setAttribute("height", o.height);
+      c.setAttribute("id", o.id);
+      !o.parent ? document.body.appendChild(c) : GetElement(o.parent).appendChild(c);
       
       var cCtx = c.getContext("2d");
       STAGES[o.id].canvas = c;
@@ -84,8 +79,9 @@ var SmartJ = (function(c, l){
   //Stage creator
   var LoadStages = function(){
     var s;
+    
     for( var i in SmartJ_Config.stages ){
-      s = SmartJ_Config.stages;
+      s = SmartJ_Config.stages;  
       CreateStage({
         width: s[i].width,
         height: s[i].height,
@@ -126,8 +122,8 @@ var SmartJ = (function(c, l){
   /* Common inside methods */
   //Create MOUSE data
   var MouseData = function(){
-    if( currentCtx ){
-      var d = currentCtx.createImageData(MOUSE.width, MOUSE.height);
+    if( bufferCtx ){
+      var d = bufferCtx.createImageData(MOUSE.width, MOUSE.height);
       for( var i = 0; i < d.data.length; i++ ){
         d.data[i] = 255;
       };
@@ -137,8 +133,8 @@ var SmartJ = (function(c, l){
   
   //Set MOUSE coordinates
   var SetMousePosition = function(e){
-    MOUSE.x = e.pageX - canvas.offsetLeft;
-    MOUSE.y = e.pageY - canvas.offsetTop;
+    MOUSE.x = e.pageX - e.target.offsetLeft;
+    MOUSE.y = e.pageY - e.target.offsetTop;
   };
   
   //Add object to stack object
@@ -151,31 +147,12 @@ var SmartJ = (function(c, l){
       if( !STACK.Groups[g] ){
         STACK.Groups[g] = [];
       };
-      CheckObjectParams(t, o) ? STACK.Groups[g].push(o) : ERROR(lang.icorrect_params);
+      STACK.Groups[g].push(o);
     }else{
-      CheckObjectParams(t, o) ? STACK.Common.push(o) : ERROR(lang.icorrect_params);  
+      STACK.Common.push(o);  
     };
     
     return o;
-  };
-  
-  //Check on correct parameters
-  //Elements interfaces
-  var CheckObjectParams = function(t, o){
-    switch(t){
-      case "line":
-        if( o.x != undefined  && o.y != undefined  && o.toX && o.toY ) return 1; break;
-      case "rect":
-        if( o.x != undefined  && o.y != undefined  && o.width && o.height ) return 1; break;
-      case "triangle":
-        if( o.x != undefined  && o.y != undefined  && o.width && o.height ) return 1; break;
-      case "circle":
-        if( o.x != undefined  && o.y != undefined  && o.radius ) return 1; break;  
-      case "image":
-        if( o.src && o.x != undefined && o.y != undefined  && o.width && o.height ) return 1; break;  
-      case "frame":
-        if( o.src && o.sx != undefined && o.sy != undefined  && o.sWidth && o.sHeight && o.dx && o.dy && o.dWidth && o.dHeight ) return 1; break;  
-    };
   };
   
   //Get each element in loop
@@ -391,10 +368,13 @@ var SmartJ = (function(c, l){
   var DefaultEvent = function(e, o, callback){
     switch(e){
       case "click":
-        canvas.addEventListener(e, function(event){
-          SetMousePosition(event);
-          if( SmartJ.ObjectsCollision({element: MOUSE, toObject: o}) ) callback(event, o);
+        document.body.addEventListener(e, function(event){
+          if( event.target.nodeName.toLowerCase() === "canvas" ){
+            SetMousePosition(event);
+            if( SmartJ.ObjectsCollision({element: MOUSE, toObject: o}) ) callback(event, o);
+          };
         }, false);
+        
         break;
     };
   };

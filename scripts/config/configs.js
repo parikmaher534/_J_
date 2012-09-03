@@ -4,6 +4,14 @@ var SmartJ_Config = {
       "plot": {
         width: 720,
         height: 400
+      },
+      "sec": {
+        width: 720,
+        height: 400
+      },
+      "th": {
+        width: 720,
+        height: 400
       }
     },
     

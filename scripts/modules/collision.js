@@ -19,7 +19,7 @@ SmartJ.ObjectsCollision = (function(objects){
    * data Object ImageData
    */
   var Interface = [ "x", "y", "width", "height", "data" ];
-  
+
   //Interface validation
   for( var i = 0; i < Interface.length; i++ ){
     for( var j in objects ){
