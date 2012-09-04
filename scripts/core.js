@@ -238,6 +238,12 @@ var SmartJ = (function(c, l){
       currentCtx.drawImage(buffer, 0, 0);
       buffer.width = buffer.width;
 
+      //Lind DX with X
+      if( e.dx || e.dy ){
+        e.dx = e.x;
+        e.dy = e.y;
+      };
+
       e.data = currentCtx.getImageData(e.x || e.dx, e.y || e.dy, e.width || e.toX - e.x || e.radius*2 || e.sWidth, e.height || e.toY - e.y || e.radius*2 || e.sHeight );
     };
   };

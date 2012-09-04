@@ -32,6 +32,7 @@ SmartJ.Sprite = (function(o, g){
         height: o.height
       },
       sprite = lib.Create.Object("frame", obj, g);
+      
   
   
   var CalcFrames = function(sprite, s, g){
@@ -67,15 +68,15 @@ SmartJ.Sprite = (function(o, g){
   /**
    * Additional API
    */
-  obj.Stop = function(){
+  sprite.Stop = function(){
     timer.remove(name);
   };
   
-  obj.Start = function(){
+  sprite.Start = function(){
     StartAnimate();
   };
   
   
-  return obj;
+  return sprite;
 });
 
