@@ -11,40 +11,37 @@
     <script src="scripts/modules/sprite.js"></script>
     <script>
       SmartJ.Event.On("load", SmartJ, function(data){
-
-        SmartJ.Create.Object("image", {src:"hero", x: 10, y:40, width:100, height:100, stage: "plot"}, "images");
-
-        SmartJ.Create.Object("frame", {src:"hero", sx: 20, sy: 20, sWidth:50, sHeight:50, dx: 240,dy:240,dWidth: 50,dHeight: 50,stage: "plot"}, "images");
-
-        SmartJ.Create.Object("rect", {x: 230, y:100, width:100, height:100, stage: "plot"});
-
-        var barb = SmartJ.Sprite({
-          src:"barbarian", 
-          sx: 268, 
-          sy: 0, 
-          width:67, 
-          height:84, 
-          x: 240, 
-          y:290, 
-          stage: "plot", 
-          frames: 8, 
-          vector: "vertical",
-          speed: 24
-        }, "sprites");
+        
+        var Timer = SmartJ.Timer();
+        
+        var barb = SmartJ.Sprite({src:"barbarian", sx: 268, sy: 0, width:67, height:84, x: 240, y:290, stage: "sec", frames: 8, vector: "vertical", speed: 24}, "sprites");
+        
+        barb.Start();
         
         SmartJ.Event.On("click", barb, function(){
-          console.log(1);
+          barb.Stop();
         });
         
-        
-        SmartJ.Timer().start({
+        Timer.start({
           name: "qq",
           action: function(){
-            SmartJ.Clear.Stage({groups: "plot"});
-            SmartJ.Render.All();
+            SmartJ.Clear.Stage({size:{x:barb.dx - 5, y:barb.dy, width:barb.width + 5, height: barb.height}, groups: "sec"});
+            SmartJ.Render.Group("sprites");
           } 
         });
         
+        SmartJ.Controlls().KeyDown("W", function(){
+          Timer.start({
+            name: "move",
+            action: function(){
+              barb.dx += 4;
+            } 
+          });
+        });
+        
+        SmartJ.Controlls().KeyUp("W", function(){
+          Timer.remove("move");
+        });
         
       });
     </script>

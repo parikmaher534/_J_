@@ -7,6 +7,7 @@ SmartJ.Sprite = (function(o, g){
   "use strict";
   
   var lib  = SmartJ,
+      timer = lib.Timer(),
       name = "sprite_" + new Date().getTime(),
       step = 0,
       obj  = {
@@ -45,18 +46,35 @@ SmartJ.Sprite = (function(o, g){
   };
   
   
-  //Add sprite to timer stack
-  lib.Timer().start({
-    name: name,
-    action: function(){
-      
-      //Change frames by speed
-      step += sprite.speed;
+  var StartAnimate = function(){
+    
+    //Add sprite to timer stack
+    timer.start({
+      name: name,
+      action: function(){
 
-      //Set sprite animation vector
-      sprite.vector == "gorizontal" ? CalcFrames(sprite, "sx", "dWidth") : CalcFrames(sprite, "sy", "dHeight");
-    }
-  });
+        //Change frames by speed
+        step += sprite.speed;
+
+        //Set sprite animation vector
+        sprite.vector == "gorizontal" ? CalcFrames(sprite, "sx", "dWidth") : CalcFrames(sprite, "sy", "dHeight");
+      }
+    });
+  };
+  
+
+  
+  /**
+   * Additional API
+   */
+  obj.Stop = function(){
+    timer.remove(name);
+  };
+  
+  obj.Start = function(){
+    StartAnimate();
+  };
+  
   
   return obj;
 });

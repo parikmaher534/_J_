@@ -2,7 +2,7 @@
   border:1px solid #CCC;
   background: #EEE;
 }
-#balls,#plot{
+#balls,#plot,#sec,#th{
   position:absolute;
   left:0px;
   top:0px;
