@@ -1,15 +1,7 @@
 var SmartJ_Config = {
   
     stages: {
-      "plot": {
-        width: 720,
-        height: 400
-      },
       "sec": {
-        width: 720,
-        height: 400
-      },
-      "th": {
         width: 720,
         height: 400
       }
@@ -20,7 +12,8 @@ var SmartJ_Config = {
         bg1 : "images/1.png",
         bg2 : "images/2.png",
         bg3 : "images/3.png",
-        barbarian : "images/barbarian.png"
+        barbarian : "images/barbarian.png",
+        br_mv: "images/barb_mv.png"
     }
     
 };

@@ -38,13 +38,18 @@ var SmartJ = (function(c, l){
     for( var i in SmartJ_Config.images ){
       img = new Image();
       img.onload = (function(i){
-        counter++;
-        IMAGES[i] = img;
-        if( counter == ln ) {
-          setTimeout(function(){
-            AddEventOnObject(SmartJ, "load", {"stages": STAGES, "images": IMAGES, "elements": STACK});
-          }, 1);
-        };
+        ;(function(i, img){
+          var checker = setInterval(function(){
+            if( img.width > 0 ){
+              counter++;
+              IMAGES[i] = img;
+              if( counter == ln ) {
+                AddEventOnObject(SmartJ, "load", {"stages": STAGES, "images": IMAGES, "elements": STACK});
+              };
+              clearInterval(checker);
+            };
+          },10);
+        }(i, img));
       }(i));
       img.src = SmartJ_Config.images[i];
     };
@@ -212,8 +217,13 @@ var SmartJ = (function(c, l){
       currentCtx = bufferCtx;
 
       currentCtx.save();
-      currentCtx.beginPath();
-      ElementStyles(e);
+      
+      //Only for system drawing
+      if( e.type != "frame" || e.type != "image" ){
+        currentCtx.beginPath();
+        ElementStyles(e);
+      };
+      
       switch(e.type){
         case "line":
           DrawLine(e); break;
@@ -229,22 +239,27 @@ var SmartJ = (function(c, l){
           DrawFrame(e); break;
       };
       
-      if( e.fill ) currentCtx.fill();
-      currentCtx.stroke();
-      currentCtx.restore();
+      //Only for system drawing
+      if( e.type != "frame" || e.type != "image" ){
+        if( e.fill ) currentCtx.fill();
+        currentCtx.stroke();
+        currentCtx.restore();
+      };
 
       currentCtx = STAGES[e.stage].ctx;
       
-      currentCtx.drawImage(buffer, 0, 0);
-      buffer.width = buffer.width;
-
-      //Lind DX with X
+      //Link DX with X
       if( e.dx || e.dy ){
         e.dx = e.x;
         e.dy = e.y;
       };
 
-      e.data = currentCtx.getImageData(e.x || e.dx, e.y || e.dy, e.width || e.toX - e.x || e.radius*2 || e.sWidth, e.height || e.toY - e.y || e.radius*2 || e.sHeight );
+      e.data = bufferCtx.getImageData(e.x || e.dx, e.y || e.dy, e.width || e.toX - e.x || e.radius*2 || e.sWidth, e.height || e.toY - e.y || e.radius*2 || e.sHeight );
+      
+      //Draw and clear buffer
+      currentCtx.drawImage(buffer, 0, 0);
+      
+      buffer.width = buffer.width;
     };
   };
   
@@ -409,7 +424,7 @@ var SmartJ = (function(c, l){
          * @param object List of element params
          * @return object
          */
-        Object: function(type, object, group){ return AddObjectToStack(type, object, group); },
+        Object: function(type, object, group){ return AddObjectToStack(type, object, group); }
       },
       
       Render: {

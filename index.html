@@ -14,34 +14,34 @@
         
         var Timer = SmartJ.Timer();
         
-        var barb = SmartJ.Sprite({src:"barbarian", sx: 268, sy: 0, width:67, height:84, x: 240, y:290, stage: "sec", frames: 8, vector: "vertical", speed: 24}, "sprites");
+        var barb = SmartJ.Sprite({src:"br_mv", sx: 0, sy: 0, width:67, height:84, x: 240, y:270, stage: "sec", frames: 8, vector: "vertical", speed: 24}, "sprites");
         
-        barb.Start();
+        var rect = SmartJ.Sprite({src:"barbarian", sx:134, sy: 0, width:67, height:84, x: 340, y:295, stage: "sec", frames: 8, vector: "vertical", speed: 24}, "sprites");
         
-        SmartJ.Event.On("click", barb, function(){
-          barb.Stop();
-        });
-        
+        SmartJ.Render.All();
+
+
+
+
+
+ 
+
         Timer.start({
-          name: "qq",
+          name:"RR",
           action: function(){
-            SmartJ.Clear.Stage({size:{x:barb.dx - 5, y:barb.dy, width:barb.width + 5, height: barb.height}, groups: "sec"});
-            SmartJ.Render.Group("sprites");
-          } 
-        });
-        
-        SmartJ.Controlls().KeyDown("W", function(){
-          Timer.start({
-            name: "move",
-            action: function(){
-              barb.x += 4;
-            } 
-          });
-        });
-        
-        SmartJ.Controlls().KeyUp("W", function(){
-          Timer.remove("move");
-        });
+            var bounce = SmartJ.ObjectsCollision({
+               element: barb,
+               toObject: rect
+             });
+             
+             barb.x += 1;
+             
+        SmartJ.Clear.Stage();
+        SmartJ.Render.All();
+             
+             if( bounce ) return false;
+          }
+        })
         
       });
     </script>

@@ -102,9 +102,12 @@ SmartJ.ObjectsCollision = (function(objects){
   };
 
   
+  
+  
   //First all objects will be looks like a rectangles for simple detection
   var o1 = objects.element, 
       o2 = objects.toObject;
+
   if( 
     o1.x + o1.width >= o2.x &&
       o1.x < o2.x + o2.width &&
