@@ -15,9 +15,17 @@
   margin-left: 720px
 }
 #Game{
-  width:1024px;
+  width:800px;
   height:600px;
   margin:20px auto;
   overflow:hidden;
   position: relative;
+}
+.map-item{
+	position:absolute;
+}
+#MapBig,#map{
+  position:absolute;
+  left:0px;
+  top:0px;
 }

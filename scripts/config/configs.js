@@ -2,8 +2,8 @@ var SmartJ_Config = {
   
     stages: {
       "map": {
-        width: 2048,
-        height: 1540,
+        width: 800,
+        height: 600,
         to: "#Game"
       }
     },
