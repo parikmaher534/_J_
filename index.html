@@ -12,42 +12,33 @@
     <script>
       SmartJ.Event.On("load", SmartJ, function(data){
         
-        var Timer = SmartJ.Timer();
+        //Create map
+        var mapWidth  = SmartJ_Config.stages.map.width,
+            mapHeight = SmartJ_Config.stages.map.height,
+            mapItemW  = 50,
+            mapItemH  = 50,
+            itemX = 0, 
+            itemY = 0;
+            
+        //Fill map    
+        for( var j = 0; j < mapHeight / mapItemH; j++ ){
+          for( var i = 0; i < mapWidth / mapItemW; i++ ){
+            SmartJ.Create.Object("image", {
+              src: "bg"+Math.floor(Math.random() * (7 - 1) + 1),
+              x: itemX, y: itemY, width: mapItemW, height: mapItemH, stage: "map", data: null
+            }, "map");
+            itemX >= mapWidth ? itemX = 0 : itemX += mapItemW;
+          };
+          itemY += mapItemH;
+        };
         
-        var barb = SmartJ.Sprite({src:"br_mv", sx: 0, sy: 0, width:67, height:84, x: 240, y:270, stage: "sec", frames: 8, vector: "vertical", speed: 24}, "sprites");
-        
-        var rect = SmartJ.Sprite({src:"barbarian", sx:134, sy: 0, width:67, height:84, x: 340, y:295, stage: "sec", frames: 8, vector: "vertical", speed: 24}, "sprites");
-        
-        SmartJ.Render.All();
-
-
-
-
-
- 
-
-        Timer.start({
-          name:"RR",
-          action: function(){
-            var bounce = SmartJ.ObjectsCollision({
-               element: barb,
-               toObject: rect
-             });
-             
-             barb.x += 1;
-             
-        SmartJ.Clear.Stage();
-        SmartJ.Render.All();
-             
-             if( bounce ) return false;
-          }
-        })
-        
+        //Draw map
+        SmartJ.Render.Group("map")
       });
     </script>
   </head>
   <body>
-      <canvas id="plot" width="720" height="400"></canvas>
+      <div id="Game"></div>
   </body>
 </html>
 

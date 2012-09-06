@@ -71,6 +71,8 @@ var SmartJ = (function(c, l){
       c.setAttribute("width", o.width);
       c.setAttribute("height", o.height);
       c.setAttribute("id", o.id);
+      c.setAttribute("style", "width:"+o.width+"px; height:"+o.height+"px");
+      
       !o.parent ? document.body.appendChild(c) : GetElement(o.parent).appendChild(c);
       
       var cCtx = c.getContext("2d");
@@ -253,8 +255,10 @@ var SmartJ = (function(c, l){
         e.dx = e.x;
         e.dy = e.y;
       };
-
-      e.data = bufferCtx.getImageData(e.x || e.dx, e.y || e.dy, e.width || e.toX - e.x || e.radius*2 || e.sWidth, e.height || e.toY - e.y || e.radius*2 || e.sHeight );
+      
+      if( e.data !== null ){
+        e.data = bufferCtx.getImageData(e.x || e.dx || 0, e.y || e.dy || 0, e.width || e.toX - e.x || e.radius*2 || e.sWidth, e.height || e.toY - e.y || e.radius*2 || e.sHeight );
+      };
       
       //Draw and clear buffer
       currentCtx.drawImage(buffer, 0, 0);

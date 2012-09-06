@@ -1,17 +1,22 @@
 var SmartJ_Config = {
   
     stages: {
-      "sec": {
-        width: 720,
-        height: 400
+      "map": {
+        width: 2048,
+        height: 1540,
+        to: "#Game"
       }
     },
     
     images : {
         hero : "images/test.png",
-        bg1 : "images/1.png",
-        bg2 : "images/2.png",
-        bg3 : "images/3.png",
+        bg1 : "images/bg1.jpg",
+        bg2 : "images/bg2.jpg",
+        bg3 : "images/bg3.jpg",
+        bg4 : "images/bg4.jpg",
+        bg5 : "images/bg5.jpg",
+        bg6 : "images/bg6.jpg",
+        bg7 : "images/bg7.jpg",
         barbarian : "images/barbarian.png",
         br_mv: "images/barb_mv.png"
     }
