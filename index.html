@@ -1,7 +1,6 @@
 <html>
   <head>
     <title>_J_</title>
-    <link type="text/css" rel="stylesheet" href="css/styles.css" />
     <script src="scripts/config/lang.js"></script>
     <script src="scripts/config/configs.js"></script>
     <script src="scripts/core.js"></script>
@@ -10,74 +9,15 @@
     <script src="scripts/modules/controlls.js"></script>
     <script src="scripts/modules/sprite.js"></script>
     <script>
-      SmartJ.Event.On("load", SmartJ, function(data){
-        
-        var Timer = new SmartJ.Timer();
-        var map = document.getElementById("MapBig");
-       
-        //Create map
-        var mapWidth  = 2048,
-            mapHeight = 1540,
-            mapItemW  = 50,
-            mapItemH  = 50,
-            itemX = 0, 
-            itemY = 0;
-            
-        //Fill map    
-        for( var j = 0; j < mapHeight / mapItemH; j++ ){
-          for( var i = 0; i < mapWidth / mapItemW; i++ ){
-            var node = document.createElement("div");
-            node.className = "map-item";
-            node.style.left = itemX;+"px";
-            node.style.top = itemY+"px";
-            map.appendChild(node);
-            node.innerHTML = "<img src='images/bg"+Math.floor(Math.random() * (7 - 1) + 1)+".jpg'  style='width:50px; height:50px'/>"
-            
-            itemX >= mapWidth ? itemX = 0 : itemX += mapItemW;
-          };
-          itemY += mapItemH;
-        };
-       
-       
-        
-       
-        var h = SmartJ.Create.Object("image",{ src:"hero", x:100, y:100, width:100, height:100, stage:"map"});
-        
-        var n = SmartJ.Create.Object("image",{ src:"hero", x:210, y:200, width:100, height:100, stage:"map"});
-       
-        SmartJ.Clear.Stage();
-        SmartJ.Render.All();
-        
-        var posX = map.offsetLeft;
-        SmartJ.Controlls().KeyDown("W", function(){
-            Timer.start({
-              name: "map3",
-              action: function(){
-                posX -= 3;
-                map.style.left = posX+"px";
-                
-                h.x -= 3;
-                n.x -= 3;
-                
-                SmartJ.Clear.Stage({size:{x:h.x, y:h.y, width: 110, height:110}});
-                SmartJ.Clear.Stage({size:{x:n.x, y:n.y, width: 110, height:110}});
-                
-                SmartJ.Render.All();
-              }
-            })
-        });
-        
-        SmartJ.Controlls().KeyUp("W", function(){
-          Timer.remove("map3")
-        })
+      SmartJ.Event.On("load", SmartJ, function(){
+          
+          //You code here
         
       });
     </script>
   </head>
   <body>
-      <div id="Game">
-        <div id="MapBig"></div>
-      </div>
+      <div id="Game"></div>
   </body>
 </html>
 
