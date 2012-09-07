@@ -23,12 +23,6 @@ var SmartJ = (function(c, l){
   
   
   
-  /**
-   * ERROR message
-   */
-  var ERROR = function(e){console.log(e);};
-  
-  
   //Resources loader
   var ResourcesLoader = function(){
     var img,
@@ -72,7 +66,7 @@ var SmartJ = (function(c, l){
       c.setAttribute("height", o.height);
       c.setAttribute("id", o.id);
       c.setAttribute("style", "width:"+o.width+"px; height:"+o.height+"px");
-      
+
       !o.parent ? document.body.appendChild(c) : GetElement(o.parent).appendChild(c);
       
       var cCtx = c.getContext("2d");
@@ -403,6 +397,27 @@ var SmartJ = (function(c, l){
         break;
     };
   };
+  
+  //Get element from global container
+  var GetObjectsArray = function(name){
+    var elements = [];
+    
+    if( name ){
+      elements = STACK.Groups[name];
+    }else{
+      for( var i in STACK ){
+        if( STACK[i].constructor === Array ){
+          elements = elements.concat(STACK[i]);
+        }else{
+          for( var j in STACK[i] ){
+            elements = elements.concat(STACK[i][j]);
+          };
+        };
+      };
+    };
+    
+    return elements;
+  };
 
  
 
@@ -429,6 +444,14 @@ var SmartJ = (function(c, l){
          * @return object
          */
         Object: function(type, object, group){ return AddObjectToStack(type, object, group); }
+      },
+      
+      Get: {
+        /**
+         * Get elements from global objects container
+         */
+        All: function(){ return GetObjectsArray(); },
+        Group: function(name){ return GetObjectsArray(name); }
       },
       
       Render: {

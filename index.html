@@ -11,7 +11,12 @@
     <script>
       SmartJ.Event.On("load", SmartJ, function(){
           
-          //You code here
+          SmartJ.Create.Object("rect", {x:10,y:20,width:20,height:20}, "test");
+          SmartJ.Create.Object("rect", {x:11,y:21,width:20,height:20}, "test");
+          SmartJ.Create.Object("rect", {x:11,y:21,width:40,height:20}, "test");
+          SmartJ.Create.Object("rect", {x:11,y:21,width:10,height:20});
+        
+          console.log(SmartJ.Get.Group("test"));
         
       });
     </script>

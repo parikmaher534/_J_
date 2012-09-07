@@ -9,6 +9,6 @@ var SmartJ_Config = {
     },
     
     images : {
-        object : "images/test.png",
+        object : "images/test.png"
     }    
 };
